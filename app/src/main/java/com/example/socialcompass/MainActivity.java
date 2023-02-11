@@ -11,14 +11,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.Manifest;
 
 
 public class MainActivity extends AppCompatActivity {
 
-//    private SensorManager sensorManager;
-//    private float[] geomagmetic;
+    private SensorManager sensorManager;
+    private float[] geomagmetic;
 
     private OrientationService orientationService;
 
@@ -77,6 +78,15 @@ public class MainActivity extends AppCompatActivity {
 
         locationService.getLocation().observe(this, loc ->{
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
+            Log.d("LOCATION", Double.toString(loc.first));
+        });
+
+        orientationService = new OrientationService(this);
+        TextView orientationDisplay = findViewById(R.id.orientationDisplay);
+
+        orientationService.getOrientation().observe(this, orientation -> {
+            orientationDisplay.setText(Float.toString(orientation));
+//            orientationDisplay.setText(String.format("%2f", orientation));
         });
     }
 }
