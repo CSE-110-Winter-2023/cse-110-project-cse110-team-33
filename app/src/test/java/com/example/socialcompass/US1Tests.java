@@ -13,6 +13,6 @@ public class US1Tests {
 
     @Test
     public void blankTest() {
-        assertEquals(1, 1);
+        assertEquals(1, 2);
     }
 }
