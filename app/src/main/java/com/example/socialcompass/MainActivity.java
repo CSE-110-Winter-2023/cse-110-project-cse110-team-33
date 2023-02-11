@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
         orientationService.getOrientation().observe(this, orientation -> {
-            orientationDisplay.setText(Float.toString(orientation));
-//            orientationDisplay.setText(String.format("%2f", orientation));
+            //orientationDisplay.setText(Float.toString(orientation));
+            orientationDisplay.setText(String.format("%.2f", orientation));
         });
     }
 }
