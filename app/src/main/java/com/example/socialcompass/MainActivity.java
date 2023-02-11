@@ -12,59 +12,24 @@ import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private SensorManager sensorManager;
-    private float[] geomagmetic;
-
     private OrientationService orientationService;
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        orientationService = new OrientationService(this);
-//        TextView orientationDisplay = findViewById(R.id.orientationDisplay);
-//
-//        orientationService.getOrientation().observe(this, orientation -> {
-//            orientationDisplay.setText(Float.toString(orientation));
-//        });
-//
-////        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-////        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-////                SensorManager.SENSOR_DELAY_NORMAL);
-//    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        orientationService.unregisterSensorListeners();
-//        sensorManager.unregisterListener(this);
-    }
-
-//    @Override
-//    public void onSensorChanged(SensorEvent sensorEvent) {
-//        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-//            geomagmetic = sensorEvent.values;
-//        }
-//
-//    }
-//
-//    @Override
-//    public void onAccuracyChanged(Sensor sensor, int i) {
-//
-//    }
-
     private LocationService locationService;
+
+    private ImageView needleDisplay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        needleDisplay = findViewById(R.id.needleDisplay);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
         && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -72,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
         }
 
+        //Initialize, pull, and display coordinates
         locationService = LocationService.singleton(this);
-
         TextView textview = (TextView) findViewById(R.id.locationDisplay);
 
         locationService.getLocation().observe(this, loc ->{
@@ -81,12 +46,20 @@ public class MainActivity extends AppCompatActivity {
             Log.d("LOCATION", Double.toString(loc.first));
         });
 
+        //Initialize, pull, and display orientation
         orientationService = new OrientationService(this);
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
         orientationService.getOrientation().observe(this, orientation -> {
             //orientationDisplay.setText(Float.toString(orientation));
             orientationDisplay.setText(String.format("%.2f", orientation));
+            needleDisplay.setRotation((float) (-orientation*180/3.14159));
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        orientationService.unregisterSensorListeners();
     }
 }
