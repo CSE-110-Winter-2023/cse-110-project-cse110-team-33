@@ -12,8 +12,26 @@ import static org.junit.Assert.*;
 public class US2Tests {
 
     @Test
-    public void blankTest() {
-        assertEquals(1, 1);
-        assertEquals(2, 2);
+    public void testCalculateBearing_ForValidInputs() {
+        double lat1 = 40.730610;
+        double long1 = -73.935242;
+        double lat2 = 48.856613;
+        double long2 = 2.352222;
+        double expectedBearing = 59.3;
+
+        double actualBearing = AngleCalculation.calculateBearing(lat1, long1, lat2, long2);
+        assertEquals(expectedBearing, actualBearing, 0.1);
+    }
+
+    @Test
+    public void testCalculateBearing_ForBoundaryInputs() {
+        double lat1 = 90;
+        double long1 = 180;
+        double lat2 = -90;
+        double long2 = -180;
+        double expectedBearing = 180;
+
+        double actualBearing = AngleCalculation.calculateBearing(lat1, long1, lat2, long2);
+        assertEquals(expectedBearing, actualBearing, 0.1);
     }
 }
