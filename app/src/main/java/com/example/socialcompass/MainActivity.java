@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
     private AngleCalculation calculator;
 
     private ImageView compassDisplay;
-    private ImageView circle;
-    private ImageView red_circle;
-    private ImageView yellow_circle;
+    private ImageView blueCircle;
+    private ImageView redCircle;
+    private ImageView yellowCircle;
     private ConstraintLayout compassConstraintLayout;
 
     @Override
@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
 
         //Parent's house
-        circle = findViewById(R.id.circle);
-        red_circle = findViewById(R.id.red_circle);
-        yellow_circle = findViewById(R.id.yellow_circle);
+        blueCircle = findViewById(R.id.blueCircle);
+        redCircle = findViewById(R.id.redCircle);
+        yellowCircle = findViewById(R.id.yellowCircle);
         Pair<Double, Double> parent_house = new Pair<Double, Double>(40.7128, -74.0060);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -60,14 +60,16 @@ public class MainActivity extends AppCompatActivity {
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
             Log.d("LOCATION", Double.toString(loc.first));
             double relative_angle = calculator.calculateBearing(loc.first, loc.second, parent_house.first, parent_house.second);
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
-            ConstraintLayout.LayoutParams layoutParams_red = (ConstraintLayout.LayoutParams) red_circle.getLayoutParams();
-            ConstraintLayout.LayoutParams layoutParams_yellow = (ConstraintLayout.LayoutParams) yellow_circle.getLayoutParams();
+            ConstraintLayout.LayoutParams layoutParamsBlue = (ConstraintLayout.LayoutParams) blueCircle.getLayoutParams();
+            ConstraintLayout.LayoutParams layoutParamsRed = (ConstraintLayout.LayoutParams) redCircle.getLayoutParams();
+            ConstraintLayout.LayoutParams layoutParamsYellow = (ConstraintLayout.LayoutParams) yellowCircle.getLayoutParams();
 
-            layoutParams.circleAngle = (float) relative_angle;
-            circle.setLayoutParams(layoutParams);
-            red_circle.setLayoutParams(layoutParams_red);
-            yellow_circle.setLayoutParams(layoutParams_yellow);
+            layoutParamsBlue.circleAngle = (float) relative_angle;
+            layoutParamsRed.circleAngle = (float) relative_angle;
+            layoutParamsYellow.circleAngle = (float) relative_angle;
+            blueCircle.setLayoutParams(layoutParamsBlue);
+            redCircle.setLayoutParams(layoutParamsRed);
+            yellowCircle.setLayoutParams(layoutParamsYellow);
         });
 
         //Initialize, pull, and display orientation
@@ -90,29 +92,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onLaunchChooseBlue(View view) {
-        ImageView view_blue = (ImageView) findViewById(R.id.circle);
+        ImageView view_blue = (ImageView) findViewById(R.id.blueCircle);
+        ImageView view_yellow = (ImageView) findViewById(R.id.yellowCircle);
+        ImageView view_red = (ImageView) findViewById(R.id.redCircle);
         if (view_blue.getVisibility() == View.VISIBLE){
             view_blue.setVisibility(View.INVISIBLE);
-        } else {
+        }
+        else {
             view_blue.setVisibility(View.VISIBLE);
+            view_red.setVisibility(View.INVISIBLE);
+            view_yellow.setVisibility(View.INVISIBLE);
         }
     }
 
     public void onLaunchChooseYellow(View view) {
-        ImageView view_yellow = (ImageView) findViewById(R.id.yellow_circle);
+        ImageView view_yellow = (ImageView) findViewById(R.id.yellowCircle);
+        ImageView view_red = (ImageView) findViewById(R.id.redCircle);
+        ImageView view_blue = (ImageView) findViewById(R.id.blueCircle);
         if (view_yellow.getVisibility() == View.VISIBLE){
             view_yellow.setVisibility(View.INVISIBLE);
         } else {
             view_yellow.setVisibility(View.VISIBLE);
+            view_blue.setVisibility(View.INVISIBLE);
+            view_red.setVisibility(View.INVISIBLE);
         }
     }
 
     public void onLaunchChooseRed(View view) {
-        ImageView view_red = (ImageView) findViewById(R.id.red_circle);
+        ImageView view_red = (ImageView) findViewById(R.id.redCircle);
+        ImageView view_blue = (ImageView) findViewById(R.id.blueCircle);
+        ImageView view_yellow = (ImageView) findViewById(R.id.yellowCircle);
         if (view_red.getVisibility() == View.VISIBLE){
             view_red.setVisibility(View.INVISIBLE);
         } else {
             view_red.setVisibility(View.VISIBLE);
+            view_yellow.setVisibility(View.INVISIBLE);
+            view_blue.setVisibility(View.INVISIBLE);
         }
     }
 }

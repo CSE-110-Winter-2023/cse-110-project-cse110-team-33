@@ -34,7 +34,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/circle"
+            android:id="@+id/blueCircle"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:visibility="invisible"
@@ -59,55 +59,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <Button
-            android:id="@+id/chooseBlue"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="37dp"
-            android:layout_marginTop="601dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="42dp"
-            android:onClick="onLaunchChooseBlue"
-            android:text="Choose The Blue Circle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/chooseYellow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/chooseYellow"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="29dp"
-            android:layout_marginTop="46dp"
-            android:layout_marginEnd="38dp"
-            android:layout_marginBottom="41dp"
-            android:onClick="onLaunchChooseYellow"
-            android:text="Choose The Yellow Circle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/chooseRed"
-            app:layout_constraintStart_toEndOf="@+id/chooseBlue"
-            app:layout_constraintTop_toBottomOf="@+id/compassDisplay"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <Button
-            android:id="@+id/chooseRed"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="523dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="41dp"
-            android:onClick="onLaunchChooseRed"
-            android:text="Choose The Red Circle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/chooseYellow"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
-
         <ImageView
-            android:id="@+id/red_circle"
+            android:id="@+id/redCircle"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:visibility="invisible"
@@ -121,7 +74,7 @@
             app:srcCompat="@drawable/red_circle" />
 
         <ImageView
-            android:id="@+id/yellow_circle"
+            android:id="@+id/yellowCircle"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:visibility="invisible"
@@ -147,6 +100,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3"/>
+
+    <Button
+        android:id="@+id/chooseBlue"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:onClick="onLaunchChooseBlue"
+        android:text="Choose The Blue Circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8"
+        app:layout_constraintHorizontal_bias="0.9"
+         />
+
+    <Button
+        android:id="@+id/chooseYellow"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:onClick="onLaunchChooseYellow"
+        android:text="Choose The Yellow Circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8"
+        app:layout_constraintHorizontal_bias="0.5"
+         />
+
+    <Button
+        android:id="@+id/chooseRed"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:onClick="onLaunchChooseRed"
+        android:text="Choose The Red Circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8"
+        app:layout_constraintHorizontal_bias="0.1"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
