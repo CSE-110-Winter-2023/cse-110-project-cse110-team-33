@@ -29,15 +29,26 @@
         app:layout_constraintVertical_bias="0.2"/>
 
     <ImageView
-        android:id="@+id/needleDisplay"
+        android:id="@+id/compassDisplay"
         android:layout_width="172dp"
         android:layout_height="291dp"
-        app:srcCompat="@drawable/needle"
+        app:srcCompat="@drawable/compass"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.4"/>
+
+    <ImageView
+        android:id="@+id/needleDisplay"
+        android:layout_width="48dp"
+        android:layout_height="68dp"
+        app:srcCompat="@drawable/needle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

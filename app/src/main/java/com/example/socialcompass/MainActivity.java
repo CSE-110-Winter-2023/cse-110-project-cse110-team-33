@@ -22,14 +22,14 @@ public class MainActivity extends AppCompatActivity {
     private OrientationService orientationService;
     private LocationService locationService;
 
-    private ImageView needleDisplay;
+    private ImageView compassDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        needleDisplay = findViewById(R.id.needleDisplay);
+        compassDisplay = findViewById(R.id.compassDisplay);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
         && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         orientationService.getOrientation().observe(this, orientation -> {
             //orientationDisplay.setText(Float.toString(orientation));
             orientationDisplay.setText(String.format("%.2f", orientation));
-            needleDisplay.setRotation((float) (-orientation*180/3.14159));
+            compassDisplay.setRotation((float) (-orientation*180/3.14159));
         });
     }
 
