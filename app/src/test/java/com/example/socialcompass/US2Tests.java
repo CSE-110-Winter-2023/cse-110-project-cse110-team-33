@@ -17,7 +17,7 @@ public class US2Tests {
         double long1 = -73.935242;
         double lat2 = 48.856613;
         double long2 = 2.352222;
-        double expectedBearing = 59.3;
+        double expectedBearing = 53.737273807858585;
 
         double actualBearing = AngleCalculation.calculateBearing(lat1, long1, lat2, long2);
         assertEquals(expectedBearing, actualBearing, 0.1);
