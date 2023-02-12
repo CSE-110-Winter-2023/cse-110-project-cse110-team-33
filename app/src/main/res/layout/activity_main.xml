@@ -28,16 +28,36 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.2"/>
 
-    <ImageView
-        android:id="@+id/compassDisplay"
-        android:layout_width="172dp"
-        android:layout_height="291dp"
-        app:srcCompat="@drawable/compass"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/compassConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/circle"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintCircle="@+id/compassDisplay"
+            app:layout_constraintCircleAngle="0"
+            app:layout_constraintCircleRadius="80dp"
+            app:srcCompat="@drawable/circle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/compassDisplay"
+            android:layout_width="172dp"
+            android:layout_height="291dp"
+            app:srcCompat="@drawable/compass"
+            tools:layout_editor_absoluteX="120dp"
+            tools:layout_editor_absoluteY="176dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/needleDisplay"
