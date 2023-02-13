@@ -130,4 +130,8 @@ public class MainActivity extends AppCompatActivity {
             view_blue.setVisibility(View.INVISIBLE);
         }
     }
+
+    public Pair<LocationService, OrientationService> getServices() {
+        return new Pair<>(locationService, orientationService);
+    }
 }
