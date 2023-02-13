@@ -22,6 +22,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.rule.GrantPermissionRule;
 
+
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -29,7 +31,6 @@ import androidx.test.rule.GrantPermissionRule;
  */
 @RunWith(RobolectricTestRunner.class)
 public class US2Tests {
-    //tests
     @Test
     public void testCalculateBearing_ForValidInputs() {
         double lat1 = 40.730610;
