@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Parents house",
+    "latitude": 23.23,
+    "longitude": 0,
+    "icon": "red"
+  },
+  {
+    "name": "Friend house",
+    "latitude": 0,
+    "longitude": 127,
+    "icon": "blue"
+  },
+  {
+    "name": "My house",
+    "latitude": 90.12,
+    "longitude": 0,
+    "icon": "green"
+  }
+]
