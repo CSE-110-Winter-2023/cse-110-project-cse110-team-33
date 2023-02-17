@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import java.util.List;
 
@@ -34,6 +35,10 @@ public class LocationListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        finish();
+    }
+
+    public void launchExitActivity(View view) {
         finish();
     }
 }
