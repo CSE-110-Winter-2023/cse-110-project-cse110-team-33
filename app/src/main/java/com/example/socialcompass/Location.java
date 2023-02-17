@@ -18,9 +18,9 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
-//@Entity(tableName = "locations")
+@Entity(tableName = "locations")
 public class Location {
-//    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     public long id = 0;
 
 //    @NonNull
