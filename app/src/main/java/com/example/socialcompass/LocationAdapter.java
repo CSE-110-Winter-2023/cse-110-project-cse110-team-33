@@ -15,16 +15,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
 
     private List<Location> locationList = Collections.emptyList();
+    private Consumer<Location> onDeleteBtnClicked;
 
     public void setLocationList(List<Location> locationList) {
         this.locationList.clear();
         this.locationList = locationList;
         Log.d("LOCATIONADAPTER", locationList.toString());
         notifyDataSetChanged();
+    }
+
+    public void setOnDeleteBtnClickedHandler(Consumer<Location> onDeleteBtnClicked) {
+        this.onDeleteBtnClicked = onDeleteBtnClicked;
     }
 
     @NonNull
@@ -72,11 +78,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             ArrayAdapter<String> adapter = new ArrayAdapter<>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
             locIcon.setAdapter(adapter);
 
-//            for (int i = 0; i < items.length; i++) {
-//                if (items[i].equals(location.icon)) {
-//                    locIcon.setSelection(i);
-//                }
-//            }
+            this.removeBtn.setOnClickListener(view -> {
+                if(onDeleteBtnClicked == null) return;
+                onDeleteBtnClicked.accept(location);
+            });
         }
 
         public Location getLocation() {
