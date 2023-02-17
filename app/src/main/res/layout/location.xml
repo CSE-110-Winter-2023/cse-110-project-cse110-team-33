@@ -13,6 +13,7 @@
         app:layout_constraintEnd_toStartOf="@id/removeBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:maxLines="1"
         android:hint="Location Name"></EditText>
 
     <LinearLayout
@@ -29,6 +30,8 @@
             android:hint="Latitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="numberDecimal"
             android:layout_weight="1"></EditText>
 
         <EditText
@@ -36,6 +39,8 @@
             android:hint="Longitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="numberDecimal"
             android:layout_weight="1"></EditText>
     </LinearLayout>
 
