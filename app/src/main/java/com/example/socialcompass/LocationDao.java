@@ -15,10 +15,10 @@ public interface LocationDao {
     @Insert
     long insert(Location location);
 
-    @Query("SELECT * FROM `todo_list_items` WHERE `id`=:id")
+    @Query("SELECT * FROM `locations` WHERE `id`=:id")
     Location get(long id);
 
-    @Query("SELECT * FROM `todo_list_items` ORDER BY `order`")
+    @Query("SELECT * FROM `locations` ORDER BY `name`")
     List<Location> getAll();
 
     @Update
@@ -30,9 +30,9 @@ public interface LocationDao {
     @Insert
     List<Long> insertAll(List<Location> locations);
 
-    @Query("SELECT * FROM `todo_list_items` ORDER BY `order`")
+    @Query("SELECT * FROM `locations` ORDER BY `name`")
     LiveData<List<Location>> getAllLive();
 
-    @Query("SELECT `order` + 1 FROM `todo_list_items` ORDER BY `order` DESC LIMIT 1")
+    @Query("SELECT `name` + 1 FROM `locations` ORDER BY `name` DESC LIMIT 1")
     int getOrderForAppend();
 }
