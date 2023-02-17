@@ -11,15 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
 
     private List<Location> locationList = Collections.emptyList();
+    private Consumer<Location> onDeleteBtnClicked;
 
     public void setLocationList(List<Location> locationList) {
         this.locationList.clear();
         this.locationList = locationList;
         notifyDataSetChanged();
+    }
+
+    public void setOnDeleteBtnClickedHandler(Consumer<Location> onDeleteBtnClicked) {
+        this.onDeleteBtnClicked = onDeleteBtnClicked;
     }
 
     @NonNull
@@ -61,6 +67,11 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             this.locLat = itemView.findViewById(R.id.locLat);
             this.locLong = itemView.findViewById(R.id.locLong);
             this.removeBtn = itemView.findViewById(R.id.addBtn);
+
+            this.removeBtn.setOnClickListener(view -> {
+                if(onDeleteBtnClicked == null) return;
+                onDeleteBtnClicked.accept(location);
+            });
         }
 
         public Location getLocation() {
