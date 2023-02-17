@@ -37,7 +37,7 @@ public class US3LocationActivityTests {
                 .build();
         LocationDatabase.injectTestDatabase(testDb);
 
-        List<Location> todos = Location.loadJSON(context, "demo_todos.json");
+        List<Location> todos = Location.loadJSON(context, "mock_locations.json");
         LocationDao = testDb.locationDao();
         LocationDao.insertAll(todos);
     }
@@ -96,7 +96,7 @@ public class US3LocationActivityTests {
 
 
     @Test
-    public void testDeleteTodo() {
+    public void testDeleteLocation() {
         ActivityScenario<LocationListActivity> scenario
                 = ActivityScenario.launch(LocationListActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
@@ -104,7 +104,7 @@ public class US3LocationActivityTests {
         scenario.moveToState(Lifecycle.State.RESUMED);
 
         scenario.onActivity(activity -> {
-            List<Location> beforeTodoList = LocationDao.getAll();
+            List<Location> beforeLocationList = LocationDao.getAll();
 
             RecyclerView recyclerView = activity.recyclerView;
             RecyclerView.ViewHolder firstVH = recyclerView.findViewHolderForAdapterPosition(0);
@@ -114,8 +114,8 @@ public class US3LocationActivityTests {
             View removeButton = firstVH.itemView.findViewById(R.id.addBtn);
             removeButton.performClick();
 
-            List<Location> afterTodoList = LocationDao.getAll();
-            assertEquals(beforeTodoList.size()-1, afterTodoList.size());
+            List<Location> afterLocationList = LocationDao.getAll();
+            assertEquals(beforeLocationList.size()-1, afterLocationList.size());
 
             Location removedLocation = LocationDao.get(id);
             assertNull(removedLocation);
