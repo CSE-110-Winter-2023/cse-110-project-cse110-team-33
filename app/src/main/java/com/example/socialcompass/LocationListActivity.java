@@ -25,6 +25,7 @@ public class LocationListActivity extends AppCompatActivity {
 
         LocationAdapter adapter = new LocationAdapter();
         adapter.setHasStableIds(true);
+        adapter.setOnLocationNameChanged(viewModel::updateName);
         adapter.setOnDeleteBtnClickedHandler(viewModel::deleteLocation);
         viewModel.getTodoListItems().observe(this, adapter::setLocationList);
 

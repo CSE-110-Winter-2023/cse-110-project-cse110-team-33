@@ -15,12 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
 
     private List<Location> locationList = Collections.emptyList();
     private Consumer<Location> onDeleteBtnClicked;
+    private BiConsumer<Location, String> onLocationNameChanged;
 
     public void setLocationList(List<Location> locationList) {
         this.locationList.clear();
@@ -31,6 +33,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     public void setOnDeleteBtnClickedHandler(Consumer<Location> onDeleteBtnClicked) {
         this.onDeleteBtnClicked = onDeleteBtnClicked;
+    }
+
+    public void setOnLocationNameChanged(BiConsumer<Location, String> onLocationNameChanged) {
+        this.onLocationNameChanged = onLocationNameChanged;
     }
 
     @NonNull
@@ -67,21 +73,31 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
         private Location location;
 
+
+        private String[] items = new String[]{"blue", "red", "yellow", "green"};
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.locName = itemView.findViewById(R.id.locName);
+            this.locName.setOnFocusChangeListener((view, hasFocus) -> {
+                if (!hasFocus) {
+                    onLocationNameChanged.accept(location,
+                            locName.getText().toString());
+                }
+            });
             this.locLat = itemView.findViewById(R.id.locLat);
             this.locLong = itemView.findViewById(R.id.locLong);
             this.removeBtn = itemView.findViewById(R.id.addBtn);
-            this.locIcon = itemView.findViewById(R.id.locIcon);
-            String[] items = new String[]{"blue", "red", "yellow", "green"};
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
-            locIcon.setAdapter(adapter);
 
             this.removeBtn.setOnClickListener(view -> {
                 if(onDeleteBtnClicked == null) return;
                 onDeleteBtnClicked.accept(location);
             });
+
+
+            this.locIcon = itemView.findViewById(R.id.locIcon);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
+            this.locIcon.setAdapter(adapter);
         }
 
         public Location getLocation() {
@@ -93,6 +109,11 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             this.locName.setText(location.name);
             this.locLat.setText(Double.toString(location.latitude));
             this.locLong.setText(Double.toString(location.longitude));
+            for (int i = 0; i < items.length; i++) {
+                if (location.icon.equals(items[i])) {
+                    this.locIcon.setSelection(i);
+                }
+            }
         }
     }
 }
