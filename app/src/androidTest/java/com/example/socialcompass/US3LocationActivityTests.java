@@ -68,6 +68,7 @@ public class US3LocationActivityTests {
     }
 
     // TODO: 2/17/23 add new location test 
+    // TODO: 2/17/23 edit icon 
 
 //    @Test
 //    public void testAddNewLocation() {
