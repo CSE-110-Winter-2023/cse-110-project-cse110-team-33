@@ -30,7 +30,7 @@ public abstract class LocationDatabase extends RoomDatabase {
     }
 
     private static LocationDatabase makeDatabase(Context context) {
-        return Room.databaseBuilder(context, LocationDatabase.class, "todo_app.db")
+        return Room.databaseBuilder(context, LocationDatabase.class, "locations_app.db")
                 .allowMainThreadQueries()
                 .addCallback(new Callback() {
                     @Override
@@ -38,7 +38,7 @@ public abstract class LocationDatabase extends RoomDatabase {
                         super.onCreate(db);
                         Executors.newSingleThreadExecutor().execute(() -> {
                             List<Location> todos = Location
-                                    .loadJSON(context, "demo_todos.json");
+                                    .loadJSON(context, "mock_locations.json");
                             getSingleton(context).locationDao().insertAll(todos);
                         });
                     }

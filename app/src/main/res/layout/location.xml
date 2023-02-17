@@ -5,23 +5,44 @@
     android:layout_height="120dp"
     android:layout_marginVertical="12dp">
 
-    <EditText
-        android:id="@+id/locName"
+    <androidx.appcompat.widget.LinearLayoutCompat
+
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        android:layout_margin="12dp"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout1"
         app:layout_constraintEnd_toStartOf="@id/addBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:maxLines="1"
-        android:hint="Location Name"></EditText>
+        android:layout_marginHorizontal="16dp">
+
+        <EditText
+            android:id="@+id/locName"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:hint="Location Name"></EditText>
+
+        <Spinner
+            android:id="@+id/locIcon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:spinnerMode="dropdown"></Spinner>
+
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/locName"
+        android:id="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout1"
         app:layout_constraintEnd_toStartOf="@id/addBtn"
         app:layout_constraintStart_toStartOf="parent">
 

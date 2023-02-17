@@ -2,6 +2,7 @@ package com.example.socialcompass;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -30,6 +31,7 @@ public class LocationViewModel extends AndroidViewModel {
 
     private void loadUsers() {
         locations = locationDao.getAllLive();
+//        Log.d("LOCATIONVM", locations.getValue().toString());
     }
 
     public void updateName(Location location, String newName) {

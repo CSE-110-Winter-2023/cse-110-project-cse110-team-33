@@ -1,14 +1,18 @@
 package com.example.socialcompass;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +23,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
     public void setLocationList(List<Location> locationList) {
         this.locationList.clear();
         this.locationList = locationList;
+        Log.d("LOCATIONADAPTER", locationList.toString());
         notifyDataSetChanged();
     }
 
@@ -52,6 +57,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         private final EditText locLat;
         private final EditText locLong;
         private final Button removeBtn;
+        private final Spinner locIcon;
 
         private Location location;
 
@@ -61,6 +67,16 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             this.locLat = itemView.findViewById(R.id.locLat);
             this.locLong = itemView.findViewById(R.id.locLong);
             this.removeBtn = itemView.findViewById(R.id.addBtn);
+            this.locIcon = itemView.findViewById(R.id.locIcon);
+            String[] items = new String[]{"blue", "red", "yellow", "green"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
+            locIcon.setAdapter(adapter);
+
+//            for (int i = 0; i < items.length; i++) {
+//                if (items[i].equals(location.icon)) {
+//                    locIcon.setSelection(i);
+//                }
+//            }
         }
 
         public Location getLocation() {
