@@ -18,18 +18,18 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
-//@Entity(tableName = "locations")
+@Entity(tableName = "locations")
 public class Location {
-//    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     public long id = 0;
 
-//    @NonNull
+    @NonNull
     public String name;
     public double latitude;
     public double longitude;
     public String icon;
 
-    public Location(String name, double latitude, double longitude, String icon) {
+    public Location(@NonNull String name, double latitude, double longitude, String icon) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -44,13 +44,7 @@ public class Location {
             Reader reader = new InputStreamReader(input);
             Gson gson = new Gson();
             Type type = new TypeToken<List<Location>>(){}.getType();
-
-//            char[] array = new char[1000];
-//            reader.read(array);
-//            Log.d("LOCATIONLIST", array.toString());
             return gson.fromJson(reader, type);
-
-//            return Collections.emptyList();
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();
