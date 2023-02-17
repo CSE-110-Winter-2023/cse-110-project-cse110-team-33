@@ -3,8 +3,10 @@ package com.example.socialcompass;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -18,6 +20,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
+
+import java.util.Optional;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -76,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
         orientationService = new OrientationService(this);
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
+        //Get mock orientation value from DataEntryPage
+        Intent intent = getIntent();
+        int mock_value = intent.getIntExtra("mock_value", 0);
+        //Parse the type of value into MutableLiveData<Float>
+        MutableLiveData<Float> float_mock_value = new MutableLiveData<>((float) mock_value);
+        //Call setMockOrientation function
+        orientationService.setMockOrientationService(float_mock_value);
+
         orientationService.getOrientation().observe(this, orientation -> {
             //orientationDisplay.setText(Float.toString(orientation));
             orientationDisplay.setText(String.format("%.2f", orientation));
@@ -84,6 +96,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+//    public static Optional<Integer> parseMock(String str){
+//        try{
+//            int maxCount = Integer.parseInt(str);
+//            return Optional.of(maxCount);
+//        } catch (NumberFormatException e) {
+//            return Optional.empty();
+//        }
+//    }
 
     @Override
     protected void onPause() {
@@ -131,7 +152,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     public Pair<LocationService, OrientationService> getServices() {
         return new Pair<>(locationService, orientationService);
     }
+
+    public void onGoToDataEntryPage(View view) {
+        Intent intent = new Intent(this, DataEntryPage.class);
+        startActivity(intent);
+    }
+
+
 }
