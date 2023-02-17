@@ -60,7 +60,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             this.locName = itemView.findViewById(R.id.locName);
             this.locLat = itemView.findViewById(R.id.locLat);
             this.locLong = itemView.findViewById(R.id.locLong);
-            this.removeBtn = itemView.findViewById(R.id.removeBtn);
+            this.removeBtn = itemView.findViewById(R.id.addBtn);
         }
 
         public Location getLocation() {
