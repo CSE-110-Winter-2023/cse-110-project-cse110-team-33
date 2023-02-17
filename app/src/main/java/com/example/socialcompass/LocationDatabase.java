@@ -20,7 +20,7 @@ public abstract class LocationDatabase extends RoomDatabase {
 
     private static LocationDatabase singleton = null;
 
-    public abstract  LocationDao locationDao();
+    public abstract LocationDao locationDao();
 
     public synchronized  static LocationDatabase getSingleton(Context context) {
         if (singleton == null) {
