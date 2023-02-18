@@ -8,37 +8,45 @@
 
     <EditText
         android:id="@+id/mock_input"
-        android:layout_width="210dp"
-        android:layout_height="48dp"
+        android:layout_width="218dp"
+        android:layout_height="77dp"
+        android:background="@drawable/textbox1"
         android:ems="10"
-        android:inputType="number"
+        android:gravity="center"
         android:hint="Enter Your Value Here"
+        android:inputType="number"
+        android:padding="20dp"
+        android:paddingLeft="20dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/mock_confirm"
-        app:layout_constraintHorizontal_bias="0.246"
+        app:layout_constraintHorizontal_bias="0.927"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.744" />
+        app:layout_constraintVertical_bias="0.766" />
 
     <Button
         android:id="@+id/mock_confirm"
         android:layout_width="54dp"
         android:layout_height="48dp"
         android:layout_marginBottom="51dp"
-        android:text="OK"
+        android:backgroundTint="@android:color/holo_green_light"
         android:onClick="onConfirmClicked"
+        android:text="OK"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.77"
+        app:layout_constraintHorizontal_bias="0.764"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.808" />
+        app:layout_constraintVertical_bias="0.816" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="365dp"
         android:layout_height="50dp"
         android:text="Insert UI Mock Angle Value"
+        android:gravity="center"
         android:textColor="#86CECB"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
