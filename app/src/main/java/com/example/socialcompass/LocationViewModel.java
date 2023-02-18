@@ -22,7 +22,7 @@ public class LocationViewModel extends AndroidViewModel {
         locationDao = db.locationDao();
     }
 
-    public LiveData<List<Location>> getTodoListItems() {
+    public LiveData<List<Location>> getLocationListItems() {
         if (locations == null) {
             loadUsers();
         }
