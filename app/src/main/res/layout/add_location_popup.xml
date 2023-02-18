@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginHorizontal="48dp"
+    android:padding="16dp"
+    android:layout_height="wrap_content"
+    android:background="#AAA">
+
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout1"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="16dp">
+
+        <EditText
+            android:id="@+id/locName"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="text"
+            android:hint="Location Name"></EditText>
+
+        <Spinner
+            android:id="@+id/locIcon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:spinnerMode="dropdown"></Spinner>
+
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/linearLayout1"
+        android:id="@+id/linearLayout2">
+
+        <EditText
+            android:id="@+id/locLat"
+            android:hint="Latitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="numberDecimal"
+            android:layout_weight="1"></EditText>
+
+        <EditText
+            android:id="@+id/locLong"
+            android:hint="Longitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="numberDecimal"
+            android:layout_weight="1"></EditText>
+    </LinearLayout>
+
+    <Button
+        android:text="ADD"
+        android:id="@+id/addBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearLayout2"
+        android:layout_centerHorizontal="true"></Button>
+
+</RelativeLayout>

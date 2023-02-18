@@ -16,5 +16,29 @@
     "latitude": 90.12,
     "longitude": 0,
     "icon": "green"
+  },
+  {
+    "name": "Her house",
+    "latitude": 90.12,
+    "longitude": 0,
+    "icon": "green"
+  },
+  {
+    "name": "His house",
+    "latitude": 90.12,
+    "longitude": 0,
+    "icon": "green"
+  },
+  {
+    "name": "A house",
+    "latitude": 90.12,
+    "longitude": 0,
+    "icon": "green"
+  },
+  {
+    "name": "Some house",
+    "latitude": 90.12,
+    "longitude": 0,
+    "icon": "green"
   }
 ]
