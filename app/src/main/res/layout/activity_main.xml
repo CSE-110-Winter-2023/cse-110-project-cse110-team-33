@@ -34,17 +34,6 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/blueCircle"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:visibility="visible"
-            app:layout_constraintCircle="@+id/compassDisplay"
-            app:layout_constraintCircleAngle="0"
-            app:layout_constraintCircleRadius="80dp"
-            app:srcCompat="@drawable/circle"
-            tools:ignore="MissingConstraints" />
-
-        <ImageView
             android:id="@+id/compassDisplay"
             android:layout_width="172dp"
             android:layout_height="291dp"

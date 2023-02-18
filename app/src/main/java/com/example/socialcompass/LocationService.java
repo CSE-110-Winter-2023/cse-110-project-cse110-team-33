@@ -42,7 +42,7 @@ public class LocationService implements LocationListener {
         this.registerLocationListener();
     }
 
-    private void registerLocationListener(){
+    public void registerLocationListener(){
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
         && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
 
@@ -58,7 +58,7 @@ public class LocationService implements LocationListener {
                 location.getLongitude()));
     }
 
-    private void unregisterLocationListener() {locationManager.removeUpdates(this); }
+    public void unregisterLocationListener() {locationManager.removeUpdates(this); }
 
     public LiveData<Pair<Double, Double>> getLocation(){ return this.locationValue; }
 

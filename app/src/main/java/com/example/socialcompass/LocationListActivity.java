@@ -42,6 +42,7 @@ public class LocationListActivity extends AppCompatActivity {
         adapter.setOnDeleteBtnClickedHandler(viewModel::deleteLocation);
         adapter.setOnLatChanged(viewModel::updateLatitude);
         adapter.setOnLongChanged(viewModel::updateLongitude);
+        adapter.setOnIconChanged(viewModel::updateIcon);
         viewModel.getLocationListItems().observe(this, adapter::setLocationList);
 
         recyclerView = findViewById(R.id.recyclerView);

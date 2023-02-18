@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
     private BiConsumer<Location, Float> onLatChanged;
     private BiConsumer<Location, Float> onLongChanged;
     private BiConsumer<Location, String> onLocationNameChanged;
+    private BiConsumer<Location, String> onIconChanged;
 
     public void setLocationList(List<Location> locationList) {
         this.locationList.clear();
@@ -48,6 +50,10 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     public void setOnLocationNameChanged(BiConsumer<Location, String> onLocationNameChanged) {
         this.onLocationNameChanged = onLocationNameChanged;
+    }
+
+    public void setOnIconChanged(BiConsumer<Location, String> onIconChanged) {
+        this.onIconChanged = onIconChanged;
     }
 
     @NonNull
@@ -121,6 +127,17 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             this.locIcon = itemView.findViewById(R.id.locIcon);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
             this.locIcon.setAdapter(adapter);
+            this.locIcon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    onIconChanged.accept(location, items[i]);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    onIconChanged.accept(location, "gray");
+                }
+            });
         }
 
         public Location getLocation() {

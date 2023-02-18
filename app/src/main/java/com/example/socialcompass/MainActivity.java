@@ -25,7 +25,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.Manifest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,60 +37,32 @@ public class MainActivity extends AppCompatActivity {
     private AngleCalculation calculator;
 
     private ImageView compassDisplay;
-    private ImageView blueCircle;
     private ConstraintLayout compassConstraintLayout;
 
     private Button locationManagerButton;
 
     private List<Location> locationList;
+    private Map<Location, ImageView> icons;
+    private LocationDao locationDao;
 
-
-    public IconViewModel iconViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        LocationDatabase db = LocationDatabase.getSingleton(this);
+        locationDao = db.locationDao();
+        locationList = locationDao.getAll();
+
+        icons = new HashMap<>();
+
         compassDisplay = findViewById(R.id.compassDisplay);
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
 
-        iconViewModel = new ViewModelProvider(this)
-                .get(IconViewModel.class);
-
-        locationList = iconViewModel.getLocationList();
-        Log.d("LOCLIST", locationList.toString());
-
         //Parent's house
-        blueCircle = findViewById(R.id.blueCircle);
 //        Pair<Double, Double> parent_house = new Pair<Double, Double>(40.7128, -74.0060);
-
-        // examples of adding icons
-        ImageView imageView = new ImageView(this);
-        imageView.setId(View.generateViewId());
-        imageView.setImageResource(R.drawable.circle_blue);
-        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
-        imageView.setLayoutParams(newParams);
-        newParams.circleAngle = 270;
-        newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
-        newParams.circleConstraint = compassDisplay.getId();
-        compassConstraintLayout.addView(imageView);
-
-
-        ImageView imageView2 = new ImageView(this);
-        imageView2.setId(View.generateViewId());
-        imageView2.setImageResource(R.drawable.circle_green);
-        ConstraintLayout.LayoutParams newParams2 = new ConstraintLayout.LayoutParams(88, 88);
-        imageView2.setLayoutParams(newParams2);
-        newParams2.circleAngle = 90;
-        newParams2.circleRadius = compassDisplay.getLayoutParams().width/2;
-        newParams2.circleConstraint = compassDisplay.getId();
-        compassConstraintLayout.addView(imageView2);
-
-        Log.d("LOCLIST", String.valueOf(imageView.getLayoutParams() == imageView2.getLayoutParams()));
-        Log.d("LOCLIST", String.valueOf(imageView.getId() == imageView2.getId()));
-        Log.d("LOCLIST", String.valueOf(imageView.getLayoutParams().width));
-        Log.d("LOCLIST", String.valueOf(compassConstraintLayout.getChildCount())); //4
 
 
         checkLocationPermissions();
@@ -106,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
         orientationService.getOrientation().observe(this, orientation -> {
-            //orientationDisplay.setText(Float.toString(orientation));
             orientationDisplay.setText(String.format("%.2f", orientation));
             compassConstraintLayout.setRotation((float) (-orientation*180/3.14159));
         });
@@ -115,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     private void checkLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
         && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
         }
     }
@@ -125,26 +97,66 @@ public class MainActivity extends AppCompatActivity {
 
         locationService.getLocation().observe(this, loc ->{
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
-//            double relative_angle = calculator.calculateBearing(loc.first, loc.second, parent_house.first, parent_house.second);
-//            ConstraintLayout.LayoutParams layoutParamsBlue = (ConstraintLayout.LayoutParams) blueCircle.getLayoutParams();
-//            layoutParamsBlue.circleAngle = (float) relative_angle;
-//            blueCircle.setLayoutParams(layoutParamsBlue);
+            displayIcons(loc);
 
         });
+    }
+
+    private void displayIcons(Pair<Double, Double> loc) {
+        for (Location location : locationList) {
+            if (!icons.containsKey(location)) {
+                ImageView imageView = new ImageView(this);
+                imageView.setId(View.generateViewId());
+                if (location.icon.equals("blue")) {
+                    imageView.setImageResource(R.drawable.circle_blue);
+                } else if (location.icon.equals("red")) {
+                    imageView.setImageResource(R.drawable.circle_red);
+                } else if (location.icon.equals("yellow")) {
+                    imageView.setImageResource(R.drawable.circle_yellow);
+                } else if (location.icon.equals("green")) {
+                    imageView.setImageResource(R.drawable.circle_green);
+                } else{
+                    imageView.setImageResource(R.drawable.circle_gray);
+                }
+
+                ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
+                imageView.setLayoutParams(newParams);
+                newParams.circleAngle = 0;
+                newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
+                newParams.circleConstraint = compassDisplay.getId();
+
+                icons.put(location, imageView);
+                compassConstraintLayout.addView(imageView);
+            }
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) icons.get(location).getLayoutParams();
+            double relative_angle = calculator.calculateBearing(loc.first, loc.second, location.longitude, location.latitude);
+            params.circleAngle = (float) relative_angle;
+            icons.get(location).setLayoutParams(params);
+
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         orientationService.unregisterSensorListeners();
+        locationService.unregisterLocationListener();
+        for (Map.Entry<Location, ImageView> entry : icons.entrySet()) {
+            compassConstraintLayout.removeView(entry.getValue());
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         orientationService.registerSensorListeners();
-        locationList = iconViewModel.getLocationList();
+        locationService.registerLocationListener();
+        locationList = locationDao.getAll();
         Log.d("LOCLIST", locationList.toString());
+        icons.clear();
+        updateLocation();
+        updateOrientation();
 
     }
 
