@@ -2,6 +2,7 @@ package com.example.socialcompass;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -62,31 +63,32 @@ public class MainActivity extends AppCompatActivity {
         blueCircle = findViewById(R.id.blueCircle);
 //        Pair<Double, Double> parent_house = new Pair<Double, Double>(40.7128, -74.0060);
 
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) blueCircle.getLayoutParams();
-
+        // examples of adding icons
         ImageView imageView = new ImageView(this);
         imageView.setId(View.generateViewId());
         imageView.setImageResource(R.drawable.circle_blue);
-        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(params);
+        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
         imageView.setLayoutParams(newParams);
         newParams.circleAngle = 270;
+        newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
         newParams.circleConstraint = compassDisplay.getId();
-//        compassConstraintLayout.addView(imageView);
-//        setContentView(compassConstraintLayout);
+        compassConstraintLayout.addView(imageView);
 
 
         ImageView imageView2 = new ImageView(this);
         imageView2.setId(View.generateViewId());
         imageView2.setImageResource(R.drawable.circle_green);
-        ConstraintLayout.LayoutParams newParams2 = new ConstraintLayout.LayoutParams(params);
+        ConstraintLayout.LayoutParams newParams2 = new ConstraintLayout.LayoutParams(88, 88);
         imageView2.setLayoutParams(newParams2);
         newParams2.circleAngle = 90;
+        newParams2.circleRadius = compassDisplay.getLayoutParams().width/2;
         newParams2.circleConstraint = compassDisplay.getId();
         compassConstraintLayout.addView(imageView2);
-//        setContentView(compassConstraintLayout);
 
         Log.d("LOCLIST", String.valueOf(imageView.getLayoutParams() == imageView2.getLayoutParams()));
         Log.d("LOCLIST", String.valueOf(imageView.getId() == imageView2.getId()));
+        Log.d("LOCLIST", String.valueOf(imageView.getLayoutParams().width));
+        Log.d("LOCLIST", String.valueOf(compassConstraintLayout.getChildCount())); //4
 
 
         checkLocationPermissions();

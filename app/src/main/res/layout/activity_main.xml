@@ -38,14 +38,11 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintCircle="@+id/compassDisplay"
             app:layout_constraintCircleAngle="0"
             app:layout_constraintCircleRadius="80dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/circle" />
+            app:srcCompat="@drawable/circle"
+            tools:ignore="MissingConstraints" />
 
         <ImageView
             android:id="@+id/compassDisplay"
