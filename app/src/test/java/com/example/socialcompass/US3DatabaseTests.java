@@ -51,8 +51,8 @@ public class US3DatabaseTests {
         Location location = dao.get(id);
         assertEquals(id, location.id);
         assertEquals(insertedlocation.name, location.name);
-        assertEquals(insertedlocation.latitude, location.latitude);
-        assertEquals(insertedlocation.longitude, location.longitude);
+        assertEquals(insertedlocation.latitude, location.latitude, 0.1);
+        assertEquals(insertedlocation.longitude, location.longitude, 0.1);
         assertEquals(insertedlocation.icon, location.icon);
     }
 

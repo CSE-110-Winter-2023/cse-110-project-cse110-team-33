@@ -27,7 +27,7 @@ public class LocationListActivity extends AppCompatActivity {
     public LocationViewModel viewModel;
 
 
-    private String[] items = new String[]{"blue", "red", "yellow", "green"};
+    private final String[] items = new String[]{"blue", "red", "yellow", "green"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,6 +3,7 @@ package com.example.socialcompass;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +17,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.Manifest;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
     private Button locationManagerButton;
 
+    private List<Location> locationList;
+
+
+    public IconViewModel iconViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,34 +52,55 @@ public class MainActivity extends AppCompatActivity {
         compassDisplay = findViewById(R.id.compassDisplay);
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
 
+        iconViewModel = new ViewModelProvider(this)
+                .get(IconViewModel.class);
+
+        locationList = iconViewModel.getLocationList();
+        Log.d("LOCLIST", locationList.toString());
+
         //Parent's house
         blueCircle = findViewById(R.id.blueCircle);
-        Pair<Double, Double> parent_house = new Pair<Double, Double>(40.7128, -74.0060);
+//        Pair<Double, Double> parent_house = new Pair<Double, Double>(40.7128, -74.0060);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) blueCircle.getLayoutParams();
 
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
-        }
+        ImageView imageView = new ImageView(this);
+        imageView.setId(View.generateViewId());
+        imageView.setImageResource(R.drawable.circle_blue);
+        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(params);
+        imageView.setLayoutParams(newParams);
+        newParams.circleAngle = 270;
+        newParams.circleConstraint = compassDisplay.getId();
+//        compassConstraintLayout.addView(imageView);
+//        setContentView(compassConstraintLayout);
 
-        //Initialize, pull, and display coordinates
+
+        ImageView imageView2 = new ImageView(this);
+        imageView2.setId(View.generateViewId());
+        imageView2.setImageResource(R.drawable.circle_green);
+        ConstraintLayout.LayoutParams newParams2 = new ConstraintLayout.LayoutParams(params);
+        imageView2.setLayoutParams(newParams2);
+        newParams2.circleAngle = 90;
+        newParams2.circleConstraint = compassDisplay.getId();
+        compassConstraintLayout.addView(imageView2);
+//        setContentView(compassConstraintLayout);
+
+        Log.d("LOCLIST", String.valueOf(imageView.getLayoutParams() == imageView2.getLayoutParams()));
+        Log.d("LOCLIST", String.valueOf(imageView.getId() == imageView2.getId()));
+
+
+        checkLocationPermissions();
+
         locationService = LocationService.singleton(this);
-        TextView textview = (TextView) findViewById(R.id.locationDisplay);
+        updateLocation();
 
-        locationService.getLocation().observe(this, loc ->{
-            textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
-            Log.d("LOCATION", Double.toString(loc.first));
-            double relative_angle = calculator.calculateBearing(loc.first, loc.second, parent_house.first, parent_house.second);
-            ConstraintLayout.LayoutParams layoutParamsBlue = (ConstraintLayout.LayoutParams) blueCircle.getLayoutParams();
-
-
-            layoutParamsBlue.circleAngle = (float) relative_angle;
-            blueCircle.setLayoutParams(layoutParamsBlue);
-
-        });
-
-        //Initialize, pull, and display orientation
         orientationService = new OrientationService(this);
+        updateOrientation();
+
+
+    }
+
+    private void updateOrientation() {
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
         orientationService.getOrientation().observe(this, orientation -> {
@@ -77,8 +108,27 @@ public class MainActivity extends AppCompatActivity {
             orientationDisplay.setText(String.format("%.2f", orientation));
             compassConstraintLayout.setRotation((float) (-orientation*180/3.14159));
         });
+    }
 
+    private void checkLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
 
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
+        }
+    }
+
+    private void updateLocation() {
+        TextView textview = (TextView) findViewById(R.id.locationDisplay);
+
+        locationService.getLocation().observe(this, loc ->{
+            textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
+//            double relative_angle = calculator.calculateBearing(loc.first, loc.second, parent_house.first, parent_house.second);
+//            ConstraintLayout.LayoutParams layoutParamsBlue = (ConstraintLayout.LayoutParams) blueCircle.getLayoutParams();
+//            layoutParamsBlue.circleAngle = (float) relative_angle;
+//            blueCircle.setLayoutParams(layoutParamsBlue);
+
+        });
     }
 
     @Override
@@ -87,6 +137,14 @@ public class MainActivity extends AppCompatActivity {
         orientationService.unregisterSensorListeners();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orientationService.registerSensorListeners();
+        locationList = iconViewModel.getLocationList();
+        Log.d("LOCLIST", locationList.toString());
+
+    }
 
     public Pair<LocationService, OrientationService> getServices() {
         return new Pair<>(locationService, orientationService);
