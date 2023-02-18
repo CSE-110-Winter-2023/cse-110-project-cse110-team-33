@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     private List<Location> locationList = Collections.emptyList();
     private Consumer<Location> onDeleteBtnClicked;
+    private BiConsumer<Location, Float> onLatChanged;
+    private BiConsumer<Location, Float> onLongChanged;
     private BiConsumer<Location, String> onLocationNameChanged;
 
     public void setLocationList(List<Location> locationList) {
@@ -33,6 +36,14 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     public void setOnDeleteBtnClickedHandler(Consumer<Location> onDeleteBtnClicked) {
         this.onDeleteBtnClicked = onDeleteBtnClicked;
+    }
+
+    public void setOnLatChanged(BiConsumer<Location, Float> onLatChanged) {
+        this.onLatChanged = onLatChanged;
+    }
+
+    public void setOnLongChanged(BiConsumer<Location, Float> onLongChanged) {
+        this.onLongChanged = onLongChanged;
     }
 
     public void setOnLocationNameChanged(BiConsumer<Location, String> onLocationNameChanged) {
@@ -94,6 +105,18 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
                 onDeleteBtnClicked.accept(location);
             });
 
+            this.locLat.setOnFocusChangeListener((view, hasFocus) -> {
+                if(!hasFocus) {
+                    onLatChanged.accept(location, Float.valueOf(locLat.getText().toString()));
+                }
+            });
+
+            this.locLong.setOnFocusChangeListener((view, hasFocus) -> {
+                if(!hasFocus) {
+                    onLongChanged.accept(location, Float.valueOf(locLong.getText().toString()));
+                }
+            });
+
 
             this.locIcon = itemView.findViewById(R.id.locIcon);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
@@ -107,8 +130,8 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
         public void setLocation(Location location) {
             this.location = location;
             this.locName.setText(location.name);
-            this.locLat.setText(Double.toString(location.latitude));
-            this.locLong.setText(Double.toString(location.longitude));
+            this.locLat.setText(new DecimalFormat("##.##").format(location.latitude));
+            this.locLong.setText(new DecimalFormat("##.##").format(location.longitude));
             for (int i = 0; i < items.length; i++) {
                 if (location.icon.equals(items[i])) {
                     this.locIcon.setSelection(i);
