@@ -69,8 +69,7 @@ public class OrientationService implements SensorEventListener {
         if (success) {
             var orientation = new float[3];
             SensorManager.getOrientation(r, orientation);
-
-            this.azimuth.postValue(orientation[0]);
+            this.azimuth.postValue(orientation[0]);//
         }
     }
 
@@ -91,4 +90,5 @@ public class OrientationService implements SensorEventListener {
         unregisterSensorListeners();
         this.azimuth = mockDataSource;
     }
+
 }

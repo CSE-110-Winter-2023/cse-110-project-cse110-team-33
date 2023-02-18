@@ -12,7 +12,7 @@
         android:layout_height="48dp"
         android:ems="10"
         android:inputType="number"
-        android:text="Enter Your Value Here"
+        android:hint="Enter Your Value Here"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/mock_confirm"
         app:layout_constraintHorizontal_bias="0.246"

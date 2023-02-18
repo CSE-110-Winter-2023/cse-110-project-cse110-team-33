@@ -80,31 +80,16 @@ public class MainActivity extends AppCompatActivity {
         orientationService = new OrientationService(this);
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
-        //Get mock orientation value from DataEntryPage
-        Intent intent = getIntent();
-        int mock_value = intent.getIntExtra("mock_value", 0);
-        //Parse the type of value into MutableLiveData<Float>
-        MutableLiveData<Float> float_mock_value = new MutableLiveData<>((float) mock_value);
-        //Call setMockOrientation function
-        orientationService.setMockOrientationService(float_mock_value);
-
         orientationService.getOrientation().observe(this, orientation -> {
-            //orientationDisplay.setText(Float.toString(orientation));
-            orientationDisplay.setText(String.format("%.2f", orientation));
+            int mock_val = getIntent().getIntExtra("mock_value", 0);
+            orientationDisplay.setText(String.format("%.2f", -orientation*180/3.14159+mock_val));
             compassConstraintLayout.setRotation((float) (-orientation*180/3.14159));
         });
 
 
+
     }
 
-//    public static Optional<Integer> parseMock(String str){
-//        try{
-//            int maxCount = Integer.parseInt(str);
-//            return Optional.of(maxCount);
-//        } catch (NumberFormatException e) {
-//            return Optional.empty();
-//        }
-//    }
 
     @Override
     protected void onPause() {
