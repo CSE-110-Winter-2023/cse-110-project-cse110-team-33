@@ -42,15 +42,11 @@ public class LocationListActivity extends AppCompatActivity {
         adapter.setOnDeleteBtnClickedHandler(viewModel::deleteLocation);
         adapter.setOnLatChanged(viewModel::updateLatitude);
         adapter.setOnLongChanged(viewModel::updateLongitude);
-        viewModel.getTodoListItems().observe(this, adapter::setLocationList);
+        viewModel.getLocationListItems().observe(this, adapter::setLocationList);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-
-//        List<Location> locationList = Location.loadJSON(this, "mock_locations.json");
-//        Log.d("LOCATIONLIST", locationList.toString());
-//        adapter.setLocationList(locationList);
     }
 
     @Override
@@ -121,23 +117,5 @@ public class LocationListActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(popupView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
         locIcon.setAdapter(adapter);
 
-    }
-
-    private void onAddTodoClicked(View popupView) {
-        EditText locName = popupView.findViewById(R.id.locName);
-        EditText locLat = popupView.findViewById(R.id.locLat);
-        EditText locLong = popupView.findViewById(R.id.locLong);
-        Spinner locIcon = popupView.findViewById(R.id.locIcon);
-
-        if (locName.getText().toString().isEmpty()) return;
-        if (locLat.getText().toString().isEmpty()) return;
-        if (locLong.getText().toString().isEmpty()) return;
-        if (locIcon.getSelectedItemPosition() < 0) return;
-
-        Location newLocation = new Location(locName.getText().toString(),
-                Double.valueOf(locLat.getText().toString()),
-                Double.valueOf(locLong.getText().toString()),
-                items[locIcon.getSelectedItemPosition()]);
-        this.viewModel.createLocation(newLocation);
     }
 }

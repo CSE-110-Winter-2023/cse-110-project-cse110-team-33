@@ -37,9 +37,9 @@ public class US3LocationActivityTests {
                 .build();
         LocationDatabase.injectTestDatabase(testDb);
 
-        List<Location> todos = Location.loadJSON(context, "mock_locations.json");
+        List<Location> locations = Location.loadJSON(context, "mock_locations.json");
         LocationDao = testDb.locationDao();
-        LocationDao.insertAll(todos);
+        LocationDao.insertAll(locations);
     }
 
     @Test

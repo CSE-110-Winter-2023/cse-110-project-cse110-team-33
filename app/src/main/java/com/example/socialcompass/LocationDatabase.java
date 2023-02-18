@@ -37,9 +37,9 @@ public abstract class LocationDatabase extends RoomDatabase {
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
                         Executors.newSingleThreadExecutor().execute(() -> {
-                            List<Location> todos = Location
+                            List<Location> locations = Location
                                     .loadJSON(context, "mock_locations.json");
-                            getSingleton(context).locationDao().insertAll(todos);
+                            getSingleton(context).locationDao().insertAll(locations);
                         });
                     }
                 })
