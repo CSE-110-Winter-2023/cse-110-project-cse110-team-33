@@ -61,29 +61,26 @@ import androidx.test.rule.GrantPermissionRule;
 
 @RunWith(RobolectricTestRunner.class)
 public class US10Tests {
+    @Rule
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
     @Test
     public void testUIMockForOrientation() {
-//        var scenario = ActivityScenario.launch(DataEntryPage.class);
-//        int textEntered = 12;
-//        scenario.onActivity(activity -> {
-//            EditText editText = activity.findViewById(R.id.mock_input);
-//            editText.setText(String.valueOf(textEntered));
-//            activity.findViewById(R.id.mock_confirm).performClick();
-//            assertEquals(3,3);
-//        });
-//        scenario.close();
+        var scenario = ActivityScenario.launch(DataEntryPage.class);
+        int textEntered = 12;
+        scenario.onActivity(activity -> {
+            EditText editText = activity.findViewById(R.id.mock_input);
+            editText.setText(String.valueOf(textEntered));
+            activity.findViewById(R.id.mock_confirm).performClick();
+//            assertEquals(12,Integer.parseInt(editText.getText().toString()));
+        });
+        scenario.close();
 
         var mainscenario = ActivityScenario.launch(MainActivity.class);
         mainscenario.onActivity(activity -> {
-            if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
-            }
-//            TextView degree = activity.findViewById(R.id.orientationDisplay);
+            TextView degree = activity.findViewById(R.id.orientationDisplay);
 //            System.out.println(textEntered);
 //            System.out.println(Integer.parseInt(degree.getText().toString()));
-//            assertEquals(textEntered,Integer.parseInt(degree.getText().toString()));
-            assertEquals(3,3);
+            assertEquals(textEntered,Integer.parseInt(degree.getText().toString()),1);
         });
         mainscenario.close();
     }
