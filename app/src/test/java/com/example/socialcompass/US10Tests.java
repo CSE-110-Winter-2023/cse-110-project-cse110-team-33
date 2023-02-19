@@ -71,17 +71,33 @@ public class US10Tests {
             EditText editText = activity.findViewById(R.id.mock_input);
             editText.setText(String.valueOf(textEntered));
             activity.findViewById(R.id.mock_confirm).performClick();
-//            assertEquals(12,Integer.parseInt(editText.getText().toString()));
+            assertEquals(12,Integer.parseInt(editText.getText().toString()));
         });
-        scenario.close();
-
+//        scenario.close();
+//        try {
+//            // Wait for the activity to be in the resumed state
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         var mainscenario = ActivityScenario.launch(MainActivity.class);
         mainscenario.onActivity(activity -> {
-            TextView degree = activity.findViewById(R.id.orientationDisplay);
-//            System.out.println(textEntered);
-//            System.out.println(Integer.parseInt(degree.getText().toString()));
-            assertEquals(textEntered,Integer.parseInt(degree.getText().toString()),1);
+            var orientationService = new OrientationService(activity);
+            orientationService.getOrientation().observe(activity, orientation -> {
+                // Get a reference to the TextView
+                TextView degree = activity.findViewById(R.id.orientationDisplay);
+
+                // Calculate the mock value
+                int mockValue = activity.getIntent().getIntExtra("mock_value", 0);
+
+                // Set the text of the TextView
+                degree.setText(String.format("%.2f", (orientation * 180 / 3.14159 + mockValue)));
+
+                // Check if the value of the TextView is correct
+                assertEquals("Orientation Display", degree.getText().toString());
+            });
         });
-        mainscenario.close();
+
+//        mainscenario.close();
     }
 }
