@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView compassDisplay;
     private ConstraintLayout compassConstraintLayout;
 
-    private Button locationManagerButton;
-
     private List<Location> locationList;
     private Map<Location, ImageView> icons;
     private LocationDao locationDao;
@@ -60,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
         compassDisplay = findViewById(R.id.compassDisplay);
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
-
-        //Parent's house
-//        Pair<Double, Double> parent_house = new Pair<Double, Double>(40.7128, -74.0060);
-
 
         checkLocationPermissions();
 

@@ -25,6 +25,7 @@ public class LocationListActivity extends AppCompatActivity {
 
     public RecyclerView recyclerView;
     public LocationViewModel viewModel;
+    public View popupView;
 
 
     private final String[] items = new String[]{"blue", "red", "yellow", "green"};
@@ -67,7 +68,7 @@ public class LocationListActivity extends AppCompatActivity {
         // inflate the layout of the popup window
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.add_location_popup, null);
+        popupView = inflater.inflate(R.layout.add_location_popup, null);
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;

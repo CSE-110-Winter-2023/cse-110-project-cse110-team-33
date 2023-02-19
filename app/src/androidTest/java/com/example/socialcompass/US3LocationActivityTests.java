@@ -3,8 +3,12 @@ package com.example.socialcompass;
 import static org.junit.Assert.*;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.Spinner;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,32 +71,46 @@ public class US3LocationActivityTests {
         });
     }
 
-    // TODO: 2/17/23 add new location test 
-    // TODO: 2/17/23 edit icon 
+    @Test
+    public void testAddNewLocation() {
+        String newName = "Ensure all tests pass";
+        int newLong = -50;
+        int newLat = 0;
+        String newIcon = "blue";
 
-//    @Test
-//    public void testAddNewLocation() {
-//        String newText = "Ensure all tests pass";
-//        ActivityScenario<LocationListActivity> scenario
-//                = ActivityScenario.launch(LocationListActivity.class);
-//        scenario.moveToState(Lifecycle.State.CREATED);
-//        scenario.moveToState(Lifecycle.State.STARTED);
-//        scenario.moveToState(Lifecycle.State.RESUMED);
-//
-//        scenario.onActivity(activity -> {
-//            List<Location> beforeTodoList = LocationDao.getAll();
-//
-//            EditText newTodoText = activity.findViewById(R.id.new_todo_text);
-//            Button addTodoButton = activity.findViewById(R.id.add_todo_btn);
-//
-//            newTodoText.setText(newText);
-//            addTodoButton.performClick();
-//
-//            List<Location> afterTodoList = LocationDao.getAll();
-//            assertEquals(beforeTodoList.size()+1, afterTodoList.size());
-//            assertEquals(newText, afterTodoList.get(afterTodoList.size()-1).name);
-//        });
-//    }
+        ActivityScenario<LocationListActivity> scenario
+                = ActivityScenario.launch(LocationListActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+
+        scenario.onActivity(activity -> {
+            List<Location> locationsBefore = LocationDao.getAll();
+
+            Button addButton = activity.findViewById(R.id.addButton);
+            addButton.performClick();
+
+            View popupView = activity.popupView;
+
+            EditText newLocationNameText = popupView.findViewById(R.id.locName);
+            EditText newLocationLongText = popupView.findViewById(R.id.locLong);
+            EditText newLocationLatText = popupView.findViewById(R.id.locLat);
+            Spinner newLocationIconText = popupView.findViewById(R.id.locIcon);
+
+            newLocationNameText.setText(newName);
+            newLocationLongText.setText(String.valueOf(newLong));
+            newLocationLatText.setText(String.valueOf(newLat));
+            newLocationIconText.setSelection(0);
+
+            Button confirmAdd = popupView.findViewById(R.id.addBtn);
+            confirmAdd.performClick();
+
+            List<Location> locationsAfter = LocationDao.getAll();
+
+            assertEquals(locationsBefore.size()+1, locationsAfter.size());
+            assertEquals(newName, locationsAfter.get(0).name);
+        });
+    }
 
 
 
@@ -123,27 +141,4 @@ public class US3LocationActivityTests {
         });
     }
 
-//    @Test
-//    public void testCheckOffTodo() {
-//        ActivityScenario<LocationListActivity> scenario
-//                = ActivityScenario.launch(LocationListActivity.class);
-//        scenario.moveToState(Lifecycle.State.CREATED);
-//        scenario.moveToState(Lifecycle.State.STARTED);
-//        scenario.moveToState(Lifecycle.State.RESUMED);
-//
-//        scenario.onActivity(activity -> {
-//            RecyclerView recyclerView = activity.recyclerView;
-//            RecyclerView.ViewHolder firstVH = recyclerView.findViewHolderForAdapterPosition(0);
-//            assertNotNull(firstVH);
-//            long id = firstVH.getItemId();
-//
-//            boolean originalCompletion = LocationDao.get(id).completed;
-//
-//            CheckBox completed = firstVH.itemView.findViewById(R.id.completed);
-//            completed.performClick();
-//
-//            Location editedItem = LocationDao.get(id);
-//            assertEquals(!originalCompletion, editedItem.completed);
-//        });
-//    }
 }
