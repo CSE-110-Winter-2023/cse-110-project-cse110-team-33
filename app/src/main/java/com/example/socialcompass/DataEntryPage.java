@@ -36,8 +36,8 @@ public class DataEntryPage extends AppCompatActivity {
     }
 
     public void onConfirmClicked(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        OrientationService orientation = new OrientationService(this);
+//        Intent intent = new Intent(this, MainActivity.class);
+//        OrientationService orientation = new OrientationService(this);
 
         TextView mock_view_input = findViewById(R.id.mock_input);
         String mock_string_input = mock_view_input.getText().toString();
@@ -56,8 +56,11 @@ public class DataEntryPage extends AppCompatActivity {
             return;
         }
 
-        intent.putExtra("mock_value", mock_value);
-        startActivity(intent);
+//        intent.putExtra("mock_value", mock_value);
+//        startActivity(intent);
+        setResult(RESULT_OK, new Intent().putExtra("orientation", mock_value));
+        finish();
+
     }
 
     public static Optional<Integer> parseMock(String str){

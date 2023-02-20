@@ -1,8 +1,10 @@
 package com.example.socialcompass;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import android.content.Context;
@@ -24,6 +26,7 @@ import android.Manifest;
 import java.util.Optional;
 
 
+
 public class MainActivity extends AppCompatActivity {
 
     private OrientationService orientationService;
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView redCircle;
     private ImageView yellowCircle;
     private ConstraintLayout compassConstraintLayout;
+
+    private static int REQUEST_CODE = 24;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,16 +83,21 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialize, pull, and display orientation
         orientationService = new OrientationService(this);
+        updateOrientation();
+
+
+    }
+
+    private void updateOrientation() {
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
         orientationService.getOrientation().observe(this, orientation -> {
-            int mock_val = getIntent().getIntExtra("mock_value", 0);
-            orientationDisplay.setText(String.format("%.2f", (orientation*180/3.14159 + mock_val)));
-            compassConstraintLayout.setRotation((float) (-(orientation*180/3.14159 + mock_val)));
+//            int mock_val = getIntent().getIntExtra("mock_value", 0);
+//            orientationDisplay.setText(String.format("%.2f", (orientation*180/3.14159 + mock_val)));
+//            compassConstraintLayout.setRotation((float) (-(orientation*180/3.14159 + mock_val)));
+            orientationDisplay.setText(String.format("%.2f", (orientation*180/3.14159)));
+            compassConstraintLayout.setRotation((float) (-(orientation*180/3.14159)));
         });
-
-
-
     }
 
 
@@ -144,8 +154,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void onGoToDataEntryPage(View view) {
         Intent intent = new Intent(this, DataEntryPage.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            int orientation = data.getIntExtra("orientation", -1);
+            Log.d("MAIN", String.valueOf(orientation));
+            if (orientation != -1) {
+                MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
+                mockOrientation.setValue((float) orientation);
+                orientationService.setMockOrientationService(mockOrientation);
+            }
+            updateOrientation();
+        }
+    }
 }
