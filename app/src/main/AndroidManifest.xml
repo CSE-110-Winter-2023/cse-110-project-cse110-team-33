@@ -15,6 +15,9 @@
         android:theme="@style/Theme.SocialCompass"
         tools:targetApi="31">
         <activity
+            android:name=".DataEntryPage"
+            android:exported="false" />
+        <activity
             android:name=".LocationListActivity"
             android:exported="false">
             <meta-data

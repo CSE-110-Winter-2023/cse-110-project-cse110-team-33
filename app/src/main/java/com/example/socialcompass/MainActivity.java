@@ -1,9 +1,12 @@
 package com.example.socialcompass;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
@@ -25,9 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.Manifest;
 
+
+import java.util.Optional;
+
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView compassDisplay;
     private ConstraintLayout compassConstraintLayout;
+
+
+    private static int REQUEST_CODE = 24;
 
     private List<Location> locationList;
     private Map<Location, ImageView> icons;
@@ -92,9 +103,10 @@ public class MainActivity extends AppCompatActivity {
         locationService.getLocation().observe(this, loc ->{
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
             displayIcons(loc);
-
+            
         });
     }
+
 
     private void displayIcons(Pair<Double, Double> loc) {
         for (Location location : locationList) {
@@ -131,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -154,12 +167,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public Pair<LocationService, OrientationService> getServices() {
         return new Pair<>(locationService, orientationService);
     }
 
+    public void onGoToDataEntryPage(View view) {
+        Intent intent = new Intent(this, DataEntryPage.class);
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            int orientation = data.getIntExtra("orientation", -1);
+            Log.d("MAIN", String.valueOf(orientation));
+            if (orientation != -1) {
+                MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
+                mockOrientation.setValue((float) (orientation * -Math.PI/180));
+                orientationService.setMockOrientationService(mockOrientation);
+            }
+            updateOrientation();
+        }
+    }
+        
     public void launchLocationListActivity(View view) {
         Intent intent = new Intent(this, LocationListActivity.class);
         startActivity(intent);
+
     }
 }
