@@ -41,7 +41,7 @@ public class US10InstrumentedTests {
 //            ConstraintLayout constraintLayout = activity.findViewById(R.id.compassConstraintLayout);
             TextView degree = activity.findViewById(R.id.orientationDisplay);
             Pair<LocationService, OrientationService> services = activity.getServices();
-            assertEquals(90, services.second.getOrientation().getValue(), 0.01);
+            assertEquals(1.57, services.second.getOrientation().getValue(), 0.01);
             assertEquals("90.00", degree.getText().toString());
         });
     }

@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
         orientationService.getOrientation().observe(this, orientation -> {
-            orientationDisplay.setText(String.format("%.2f", orientation));
-            compassConstraintLayout.setRotation((float) (-orientation*180/3.14159));
+            orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159));
+            compassConstraintLayout.setRotation((float) - (orientation*180/3.14159));
         });
     }
 
@@ -100,11 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateLocation() {
         TextView textview = (TextView) findViewById(R.id.locationDisplay);
-
         locationService.getLocation().observe(this, loc ->{
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
             displayIcons(loc);
-            
+
         });
     }
 
@@ -209,13 +208,19 @@ public class MainActivity extends AppCompatActivity {
 
         if (data != null) {
             int orientation = data.getIntExtra("orientation", -1);
-            Log.d("MAIN", String.valueOf(orientation));
+//            Log.d("MAIN", String.valueOf(orientation));
             if (orientation != -1) {
                 MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
-//                mockOrientation.setValue((float) (((orientation*Math.PI)/180)));
-                mockOrientation.setValue((float) ((Math.abs(orientation))));
-
+                mockOrientation.setValue((float) (((orientation*Math.PI)/180)));
                 orientationService.setMockOrientationService(mockOrientation);
+//                var orientation = orientationService.getOrientation().getValue();
+//                TextView orientationDisplay = findViewById(R.id.orientationDisplay);
+//                orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159) + mock_val);
+//                compassConstraintLayout.setRotation((float) - (orientation*180/3.14159 + mock_val));
+
+
+//                mockOrientation.setValue((float) ((Math.abs(orientation))));
+
             } else {
                 orientationService.registerSensorListeners();
                 locationService.registerLocationListener();

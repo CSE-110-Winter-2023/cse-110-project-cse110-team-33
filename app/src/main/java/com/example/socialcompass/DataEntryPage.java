@@ -11,7 +11,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.Optional;
-
+//Setting this value results in the app behaves as though the
+// top of the phone is pointing at the designated compass direction.
 public class DataEntryPage extends AppCompatActivity {
 
     @Override
@@ -19,7 +20,7 @@ public class DataEntryPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_entry_page);
     }
-
+    //Display alert for invalid input
     public static String showAlert(Activity activity, String message){
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
 
@@ -35,7 +36,7 @@ public class DataEntryPage extends AppCompatActivity {
         alertDialog.show();
         return message;
     }
-
+    //check for invalid input
     public static boolean checkIfValidInput(int input){
         if(input < 0 || input > 359){
             return false;
@@ -75,10 +76,4 @@ public class DataEntryPage extends AppCompatActivity {
             return Optional.empty();
         }
     }
-
-//    public void GoBackMain(View view) {
-//        Intent intent = new Intent(this, MainActivity.class);
-//        startActivity(intent);
-//        //finish();
-//    }
 }

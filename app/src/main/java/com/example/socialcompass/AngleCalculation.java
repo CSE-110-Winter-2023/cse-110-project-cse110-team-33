@@ -3,7 +3,8 @@ package com.example.socialcompass;
 import static java.lang.Math.*;
 import androidx.appcompat.app.AppCompatActivity;
 
-
+//calculates the bearing (in degrees) between two geographic coordinates
+// using the Haversine formula.
 public class AngleCalculation {
 
 
