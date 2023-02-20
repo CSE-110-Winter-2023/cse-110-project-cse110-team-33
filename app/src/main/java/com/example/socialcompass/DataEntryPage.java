@@ -20,7 +20,7 @@ public class DataEntryPage extends AppCompatActivity {
         setContentView(R.layout.activity_data_entry_page);
     }
 
-    public static void showAlert(Activity activity, String message){
+    public static String showAlert(Activity activity, String message){
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
 
         alertBuilder
@@ -33,11 +33,17 @@ public class DataEntryPage extends AppCompatActivity {
 
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
+        return message;
+    }
+
+    public static boolean checkIfValidInput(int input){
+        if(input < 0 || input > 359){
+            return false;
+        }
+        return true;
     }
 
     public void onConfirmClicked(View view) {
-//        Intent intent = new Intent(this, MainActivity.class);
-//        OrientationService orientation = new OrientationService(this);
 
         TextView mock_view_input = findViewById(R.id.mock_input);
         String mock_string_input = mock_view_input.getText().toString();
@@ -45,19 +51,17 @@ public class DataEntryPage extends AppCompatActivity {
         Optional<Integer> mock_int_input = DataEntryPage.parseMock(mock_string_input);
 
         if(!mock_int_input.isPresent()){
-            DataEntryPage.showAlert(this,"This is not a number");
+            String s = DataEntryPage.showAlert(this,"This is not a number");
             return;
         }
 
         int mock_value = mock_int_input.get();
 
-        if(mock_value < 0 || mock_value > 359){
-            DataEntryPage.showAlert(this, "Please enter a number between 0 and 359!");
+        if(!checkIfValidInput(mock_value)){
+            String s = DataEntryPage.showAlert(this, "Please enter a number between 0 and 359!");
             return;
         }
 
-//        intent.putExtra("mock_value", mock_value);
-//        startActivity(intent);
         setResult(RESULT_OK, new Intent().putExtra("orientation", mock_value));
         finish();
 
