@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Optional;
 
 public class LocationListActivity extends AppCompatActivity {
 
@@ -59,7 +62,36 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     public void launchExitActivity(View view) {
-        setResult(RESULT_OK, new Intent());
+//        setResult(RESULT_OK, new Intent());
+
+
+        EditText mock_view_input = findViewById(R.id.mock_input);
+        String mock_string_input = mock_view_input.getText().toString();
+
+        Optional<Integer> mock_int_input = DataEntryPage.parseMock(mock_string_input);
+
+//        if(!mock_int_input.isPresent()){
+//            String s = DataEntryPage.showAlert(this,"This is not a number");
+//            return;
+//        }
+//
+//        int mock_value = mock_int_input.get();
+//
+//        if(!checkIfValidInput(mock_value)){
+//            String s = DataEntryPage.showAlert(this, "Please enter a number between 0 and 359!");
+//            return;
+//        }
+
+        if (mock_int_input.isPresent()) {
+            int mock_value = mock_int_input.get();
+            if (checkIfValidInput(mock_value)) {
+
+                setResult(RESULT_OK, new Intent().putExtra("orientation", mock_value));
+                finish();
+
+            }
+        }
+//        finish();
         finish();
     }
 
@@ -120,6 +152,53 @@ public class LocationListActivity extends AppCompatActivity {
         Spinner locIcon = popupView.findViewById(R.id.locIcon);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(popupView.getContext(), android.R.layout.simple_spinner_dropdown_item, items);
         locIcon.setAdapter(adapter);
+
+    }
+
+    public static String showAlert(Activity activity, String message){
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+
+        alertBuilder
+                .setTitle("Alert!")
+                .setMessage(message)
+                .setPositiveButton("Ok", (dialog, id) -> {
+                    dialog.cancel();
+                })
+                .setCancelable(true);
+
+        AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
+        return message;
+    }
+
+    public static boolean checkIfValidInput(int input){
+        if(input < 0 || input > 359){
+            return false;
+        }
+        return true;
+    }
+
+    public void onConfirmClicked(View view) {
+
+        EditText mock_view_input = findViewById(R.id.mock_input);
+        String mock_string_input = mock_view_input.getText().toString();
+
+        Optional<Integer> mock_int_input = DataEntryPage.parseMock(mock_string_input);
+
+        if(!mock_int_input.isPresent()){
+            LocationListActivity.showAlert(this,"This is not a number");
+            return;
+        }
+
+        int mock_value = mock_int_input.get();
+
+        if(!checkIfValidInput(mock_value)){
+            LocationListActivity.showAlert(this, "Please enter a number between 0 and 359!");
+            return;
+        }
+
+        setResult(RESULT_OK, new Intent().putExtra("orientation", mock_value));
+        finish();
 
     }
 }

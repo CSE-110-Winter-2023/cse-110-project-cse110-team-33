@@ -6,6 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".LocationListActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayoutMock">
+
+    <EditText
+        android:layout_weight="2"
+        android:id="@+id/mock_input"
+        android:layout_width="218dp"
+        android:layout_height="77dp"
+        android:background="@drawable/textbox1"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Enter Mock Orientation Here"
+        android:inputType="number"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:layout_weight="1"
+        android:id="@+id/mock_confirm"
+        android:layout_width="54dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@android:color/holo_green_light"
+        android:onClick="onConfirmClicked"
+        android:text="OK"
+        android:layout_marginEnd="20dp"
+        android:textColor="@color/white"/></LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="0dp"
@@ -13,7 +43,7 @@
         app:layout_constraintBottom_toTopOf="@id/addButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutMock" />
 
     <Button
         android:id="@+id/addButton"

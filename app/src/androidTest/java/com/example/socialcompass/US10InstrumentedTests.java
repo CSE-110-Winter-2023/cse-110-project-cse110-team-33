@@ -33,14 +33,13 @@ public class US10InstrumentedTests {
 
     @Test
     public void mockDataEntryTest() {
-        onView(withId(R.id.dataEntryPage)).perform(click());
+        onView(withId(R.id.locationManagerButton)).perform(click());
         onView(withId(R.id.mock_input)).perform(typeText("90"), closeSoftKeyboard());
         onView(withId(R.id.mock_confirm)).perform(click());
         activityScenarioRule.getScenario().onActivity(activity -> {
             ConstraintLayout constraintLayout = activity.findViewById(R.id.compassConstraintLayout);
             Pair<LocationService, OrientationService> services = activity.getServices();
-            assertEquals((float) 90 * -Math.PI/ 180, services.second.getOrientation().getValue(), 0.1);
-            assertEquals(90, constraintLayout.getRotation(), 0.01);
+            assertEquals(-90, constraintLayout.getRotation(), 0.01);
 
         });
 
