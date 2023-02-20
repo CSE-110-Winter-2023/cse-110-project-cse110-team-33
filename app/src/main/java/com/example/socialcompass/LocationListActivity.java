@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -58,6 +59,7 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     public void launchExitActivity(View view) {
+        setResult(RESULT_OK, new Intent());
         finish();
     }
 

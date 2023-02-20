@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout compassConstraintLayout;
 
 
-    private static int REQUEST_CODE = 24;
+    private static int REQUEST_CODE_DEP = 24;
+    private static int REQUEST_CODE_LLA = 25;
 
     private List<Location> locationList;
     private Map<Location, ImageView> icons;
@@ -143,6 +144,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public Pair<LocationService, OrientationService> getServices() {
+        return new Pair<>(locationService, orientationService);
+    }
+
+    public void launchLocationListActivity(View view) {
+        Intent intent = new Intent(this, LocationListActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_LLA);
+
+    }
+
+    public void onGoToDataEntryPage(View view) {
+        Intent intent = new Intent(this, DataEntryPage.class);
+        startActivityForResult(intent, REQUEST_CODE_DEP);
+    }
+
 
     @Override
     protected void onPause() {
@@ -154,47 +170,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        orientationService.registerSensorListeners();
-        locationService.registerLocationListener();
-        locationList = locationDao.getAll();
-        Log.d("LOCLIST", locationList.toString());
-        icons.clear();
-        updateLocation();
-        updateOrientation();
-
-    }
-
-
-    public Pair<LocationService, OrientationService> getServices() {
-        return new Pair<>(locationService, orientationService);
-    }
-
-    public void onGoToDataEntryPage(View view) {
-        Intent intent = new Intent(this, DataEntryPage.class);
-        startActivityForResult(intent, REQUEST_CODE);
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        orientationService.registerSensorListeners();
+//        locationService.registerLocationListener();
+//        locationList = locationDao.getAll();
+//        icons.clear();
+//        updateLocation();
+//        updateOrientation();
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == REQUEST_CODE_DEP) {
             int orientation = data.getIntExtra("orientation", -1);
             Log.d("MAIN", String.valueOf(orientation));
             if (orientation != -1) {
                 MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
-                mockOrientation.setValue((float) (orientation * -Math.PI/180));
+                mockOrientation.setValue((float) (((-orientation*Math.PI)/180) % Math.PI));
                 orientationService.setMockOrientationService(mockOrientation);
             }
+            icons.clear();
+            updateLocation();
+            updateOrientation();
+        }
+        else if (requestCode == REQUEST_CODE_LLA){
+            //super.onResume();
+            orientationService.registerSensorListeners();
+            locationService.registerLocationListener();
+            locationList = locationDao.getAll();
+            icons.clear();
+            updateLocation();
             updateOrientation();
         }
     }
-        
-    public void launchLocationListActivity(View view) {
-        Intent intent = new Intent(this, LocationListActivity.class);
-        startActivity(intent);
 
-    }
 }
