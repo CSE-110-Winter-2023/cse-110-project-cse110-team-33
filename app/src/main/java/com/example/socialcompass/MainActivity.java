@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MAIN", String.valueOf(orientation));
             if (orientation != -1) {
                 MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
-                mockOrientation.setValue((float) orientation);
+                mockOrientation.setValue((float) (orientation * -Math.PI/180));
                 orientationService.setMockOrientationService(mockOrientation);
             }
             updateOrientation();
