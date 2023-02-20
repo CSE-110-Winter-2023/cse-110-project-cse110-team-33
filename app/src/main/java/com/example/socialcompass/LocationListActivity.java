@@ -68,19 +68,7 @@ public class LocationListActivity extends AppCompatActivity {
         EditText mock_view_input = findViewById(R.id.mock_input);
         String mock_string_input = mock_view_input.getText().toString();
 
-        Optional<Integer> mock_int_input = DataEntryPage.parseMock(mock_string_input);
-
-//        if(!mock_int_input.isPresent()){
-//            String s = DataEntryPage.showAlert(this,"This is not a number");
-//            return;
-//        }
-//
-//        int mock_value = mock_int_input.get();
-//
-//        if(!checkIfValidInput(mock_value)){
-//            String s = DataEntryPage.showAlert(this, "Please enter a number between 0 and 359!");
-//            return;
-//        }
+        Optional<Integer> mock_int_input = parseMock(mock_string_input);
 
         if (mock_int_input.isPresent()) {
             int mock_value = mock_int_input.get();
@@ -183,7 +171,7 @@ public class LocationListActivity extends AppCompatActivity {
         EditText mock_view_input = findViewById(R.id.mock_input);
         String mock_string_input = mock_view_input.getText().toString();
 
-        Optional<Integer> mock_int_input = DataEntryPage.parseMock(mock_string_input);
+        Optional<Integer> mock_int_input = parseMock(mock_string_input);
 
         if(!mock_int_input.isPresent()){
             LocationListActivity.showAlert(this,"This is not a number");
@@ -200,5 +188,13 @@ public class LocationListActivity extends AppCompatActivity {
         setResult(RESULT_OK, new Intent().putExtra("orientation", mock_value));
         finish();
 
+    }
+    public static Optional<Integer> parseMock(String str){
+        try{
+            int maxCount = Integer.parseInt(str);
+            return Optional.of(maxCount);
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 }
