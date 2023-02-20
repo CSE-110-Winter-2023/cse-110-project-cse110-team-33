@@ -1,13 +1,14 @@
 package com.example.socialcompass;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 import android.widget.Spinner;
 
 import androidx.lifecycle.Lifecycle;
@@ -16,21 +17,34 @@ import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+//import androidx.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
-public class US3LocationActivityTests {
+public class US3Tests {
+
     LocationDatabase testDb;
     LocationDao LocationDao;
 
     private static void forceLayout(RecyclerView recyclerView) {
         recyclerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         recyclerView.layout(0,0,1080,2280);
+    }
+
+    @Before
+    public void createDb() {
+        Context context = ApplicationProvider.getApplicationContext();
+        testDb = Room.inMemoryDatabaseBuilder(context, LocationDatabase.class)
+                .allowMainThreadQueries()
+                .build();
+        LocationDao = testDb.locationDao();
     }
 
     @Before
@@ -44,6 +58,58 @@ public class US3LocationActivityTests {
         List<Location> locations = Location.loadJSON(context, "mock_locations.json");
         LocationDao = testDb.locationDao();
         LocationDao.insertAll(locations);
+    }
+
+    @Test
+    public void testInsert() {
+        Location location1 = new Location("Location 1", 12.23, 23.34,"pink");
+        Location location2 = new Location("Location 2", 23.34,12.23, "magenta");
+
+        long id1 = LocationDao.insert(location1);
+        long id2 = LocationDao.insert(location2);
+
+        assertNotEquals(id1, id2);
+    }
+
+    @Test
+    public void testGet() {
+        Location insertedlocation = new Location("Bill's house", 124,26.73, "magenta");
+        long id = LocationDao.insert(insertedlocation);
+
+        Location location = LocationDao.get(id);
+        assertEquals(id, location.id);
+        assertEquals(insertedlocation.name, location.name);
+        assertEquals(insertedlocation.latitude, location.latitude, 0.1);
+        assertEquals(insertedlocation.longitude, location.longitude, 0.1);
+        assertEquals(insertedlocation.icon, location.icon);
+    }
+
+    @Test
+    public void testUpdate() {
+        Location location = new Location("Bill's house", 124,26.73, "magenta");
+        long id = LocationDao.insert(location);
+
+        location = LocationDao.get(id);
+        location.name = "No longer Bill's house";
+        int locationsUpdated = LocationDao.update(location);
+        assertEquals(1, locationsUpdated);
+
+        location = LocationDao.get(id);
+        assertNotNull(location);
+        assertEquals("No longer Bill's house", location.name);
+
+    }
+
+    @Test
+    public void testDelete() {
+        Location location = new Location("Bill's house", 124,26.73, "magenta");
+        long id = LocationDao.insert(location);
+
+        location = LocationDao.get(id);
+        int locationsDeleted = LocationDao.delete(location);
+        assertEquals(1, locationsDeleted);
+        assertNull(LocationDao.get(id));
+
     }
 
     @Test
@@ -141,4 +207,9 @@ public class US3LocationActivityTests {
         });
     }
 
+    @After
+    public void closeDb() throws IOException {
+        testDb.close();
+    }
 }
+
