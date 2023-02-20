@@ -76,9 +76,9 @@ public class DataEntryPage extends AppCompatActivity {
         }
     }
 
-    public void GoBackMain(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        //finish();
-    }
+//    public void GoBackMain(View view) {
+//        Intent intent = new Intent(this, MainActivity.class);
+//        startActivity(intent);
+//        //finish();
+//    }
 }

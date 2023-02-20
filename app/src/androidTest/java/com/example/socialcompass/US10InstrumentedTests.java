@@ -21,6 +21,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.*;
 
 import android.util.Pair;
+import android.widget.TextView;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -37,11 +38,11 @@ public class US10InstrumentedTests {
         onView(withId(R.id.mock_input)).perform(typeText("90"), closeSoftKeyboard());
         onView(withId(R.id.mock_confirm)).perform(click());
         activityScenarioRule.getScenario().onActivity(activity -> {
-            ConstraintLayout constraintLayout = activity.findViewById(R.id.compassConstraintLayout);
-            Pair<LocationService, OrientationService> services = activity.getServices();
-            assertEquals(-90, constraintLayout.getRotation(), 0.01);
-
+//            ConstraintLayout constraintLayout = activity.findViewById(R.id.compassConstraintLayout);
+            TextView degree = activity.findViewById(R.id.orientationDisplay);
+//            Pair<LocationService, OrientationService> services = activity.getServices();
+//            assertEquals(-90, constraintLayout.getRotation(), 0.01);
+            assertEquals("1.57", degree.getText().toString());
         });
-
     }
 }
