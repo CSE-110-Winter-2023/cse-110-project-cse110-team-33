@@ -61,9 +61,9 @@ public class DataEntryPage extends AppCompatActivity {
             String s = DataEntryPage.showAlert(this, "Please enter a number between 0 and 359!");
             return;
         }
-
-        setResult(RESULT_OK, new Intent().putExtra("orientation", mock_value));
-        finish();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("mock_value", mock_value);
+        startActivity(intent);
 
     }
 

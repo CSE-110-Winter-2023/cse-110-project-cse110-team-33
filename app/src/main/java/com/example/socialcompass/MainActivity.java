@@ -85,8 +85,9 @@ public class MainActivity extends AppCompatActivity {
         TextView orientationDisplay = findViewById(R.id.orientationDisplay);
 
         orientationService.getOrientation().observe(this, orientation -> {
-            orientationDisplay.setText(String.format("%.2f", orientation));
-            compassConstraintLayout.setRotation((float) (-orientation*180/3.14159));
+            int mock_val = getIntent().getIntExtra("mock_value",0);
+            orientationDisplay.setText(String.format("%.2f", (orientation*180/3.14159 + (float)mock_val)));
+            compassConstraintLayout.setRotation((float) (-(orientation*180/3.14159 + (float)mock_val)));
         });
     }
 
