@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         LocationDatabase db = LocationDatabase.getSingleton(this);
         locationDao = db.locationDao();
-        locationList = locationDao.getAll();
+//        locationList = locationDao.getAll();
 
         icons = new HashMap<>();
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textview = (TextView) findViewById(R.id.locationDisplay);
         locationService.getLocation().observe(this, loc ->{
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
-            displayIcons(loc);
+//            displayIcons(loc);
 
         });
     }
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             locationService.registerLocationListener();
         }
         locationList.clear();
-        locationList = locationDao.getAll();
+//        locationList = locationDao.getAll();
         icons.clear();
         updateLocation();
         updateOrientation();

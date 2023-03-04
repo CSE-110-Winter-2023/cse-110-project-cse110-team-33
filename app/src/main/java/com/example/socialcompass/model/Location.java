@@ -50,9 +50,9 @@ public class Location {
     public String public_code;
 
     @NonNull
+    public String label;
     public double latitude;
     public double longitude;
-    public String label;
 
     @JsonAdapter(TimestampAdapter.class)
     @SerializedName(value = "created_at", alternate = "createAt")
@@ -69,7 +69,7 @@ public class Location {
         this.label = label;
         this.created_at = 0;
         this.updated_at = 0;
-        Log.d("LOCATIONLIST", this.toString());
+//        Log.d("LOCATIONLIST", this.toString());
     }
 
     @Ignore
@@ -105,6 +105,8 @@ public class Location {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", label='" + label + '\'' +
+                ", created_at=" + created_at +
+                ", updated_at=" + updated_at +
                 '}';
     }
 
