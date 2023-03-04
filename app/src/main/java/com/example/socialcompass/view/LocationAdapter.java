@@ -79,7 +79,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     @Override
     public long getItemId(int position) {
-        return locationList.get(position).id;
+        return locationList.get(position).public_code.hashCode();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
@@ -40,11 +41,15 @@ class TimestampAdapter extends TypeAdapter<Long> {
 
 @Entity(tableName = "locations")
 public class Location {
-    @PrimaryKey(autoGenerate = true)
-    public long id = 0;
+//    @PrimaryKey(autoGenerate = true)
+//    public long id = 0;
 
+    @PrimaryKey
+    @SerializedName("public_code")
     @NonNull
     public String public_code;
+
+    @NonNull
     public double latitude;
     public double longitude;
     public String label;
@@ -65,6 +70,16 @@ public class Location {
         this.created_at = 0;
         this.updated_at = 0;
         Log.d("LOCATIONLIST", this.toString());
+    }
+
+    @Ignore
+    public Location(@NonNull String public_code, double latitude, double longitude, String label, long created_at, long updated_at) {
+        this.public_code = public_code;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.label = label;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     // TODO: fix to work with new fields

@@ -15,8 +15,8 @@ public interface LocationDao {
     @Insert
     long insert(Location location);
 
-    @Query("SELECT * FROM `locations` WHERE `id`=:id")
-    Location get(long id);
+    @Query("SELECT * FROM `locations` WHERE `public_code`=:public_code")
+    Location get(String public_code);
 
     @Query("SELECT * FROM `locations` ORDER BY public_code")
     List<Location> getAll();
