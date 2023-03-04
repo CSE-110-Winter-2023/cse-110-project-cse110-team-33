@@ -1,35 +1,30 @@
-package com.example.socialcompass;
+package com.example.socialcompass.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.util.Pair;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.Manifest;
 
 
-import java.util.Optional;
+import com.example.socialcompass.utility.AngleCalculation;
+import com.example.socialcompass.model.Location;
+import com.example.socialcompass.model.LocationDao;
+import com.example.socialcompass.model.LocationDatabase;
+import com.example.socialcompass.utility.LocationService;
+import com.example.socialcompass.utility.OrientationService;
+import com.example.socialcompass.R;
 
 
 import java.util.HashMap;
@@ -55,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private Map<Location, ImageView> icons;
     private LocationDao locationDao;
 
+    private String public_code;
+    private String private_code;
+    private String display_name;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +78,29 @@ public class MainActivity extends AppCompatActivity {
         orientationService = new OrientationService(this);
         updateOrientation();
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        public_code = preferences.getString("public_code", "null");
+        private_code = preferences.getString("private_code", "null");
+        display_name = preferences.getString("display_name", "null");
 
+        TextView displayName = findViewById(R.id.displayName);
+        TextView publicCode = findViewById(R.id.publicCode);
+        TextView privateCode = findViewById(R.id.privateCode);
+
+        displayName.setText(display_name);
+        publicCode.setText(public_code);
+        privateCode.setText(private_code);
+
+        if (public_code.equals("null")) {
+            Intent intent = new Intent(this, FirstLaunchActivity.class);
+            startActivity(intent);
+        }
+
+
+    }
+
+    private void getUID() {
+        // if UID doesn't exist, start firstlaunchactivity
     }
 
     private void updateOrientation() {
@@ -113,13 +134,13 @@ public class MainActivity extends AppCompatActivity {
             if (!icons.containsKey(location)) {
                 ImageView imageView = new ImageView(this);
                 imageView.setId(View.generateViewId());
-                if (location.icon.equals("blue")) {
+                if (location.label.equals("blue")) {
                     imageView.setImageResource(R.drawable.circle_blue);
-                } else if (location.icon.equals("red")) {
+                } else if (location.label.equals("red")) {
                     imageView.setImageResource(R.drawable.circle_red);
-                } else if (location.icon.equals("yellow")) {
+                } else if (location.label.equals("yellow")) {
                     imageView.setImageResource(R.drawable.circle_yellow);
-                } else if (location.icon.equals("green")) {
+                } else if (location.label.equals("green")) {
                     imageView.setImageResource(R.drawable.circle_green);
                 } else{
                     imageView.setImageResource(R.drawable.circle_gray);

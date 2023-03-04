@@ -1,4 +1,4 @@
-package com.example.socialcompass;
+package com.example.socialcompass.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,10 +9,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,9 +18,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-import java.util.List;
+import com.example.socialcompass.model.Location;
+import com.example.socialcompass.view.LocationAdapter;
+import com.example.socialcompass.viewmodel.LocationViewModel;
+import com.example.socialcompass.R;
+
 import java.util.Optional;
 
 public class LocationListActivity extends AppCompatActivity {

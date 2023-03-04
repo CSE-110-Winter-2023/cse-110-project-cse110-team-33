@@ -1,7 +1,6 @@
-package com.example.socialcompass;
+package com.example.socialcompass.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.socialcompass.R;
 
 import java.util.Optional;
 //Setting this value results in the app behaves as though the

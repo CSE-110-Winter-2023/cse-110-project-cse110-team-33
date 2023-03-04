@@ -1,4 +1,4 @@
-package com.example.socialcompass;
+package com.example.socialcompass.utility;
 
 import static java.lang.Math.*;
 import androidx.appcompat.app.AppCompatActivity;

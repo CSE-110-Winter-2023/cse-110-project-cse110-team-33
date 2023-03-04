@@ -1,4 +1,4 @@
-package com.example.socialcompass;
+package com.example.socialcompass.model;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,6 +8,9 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -15,8 +18,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+
+class TimestampAdapter extends TypeAdapter<Long> {
+
+    @Override
+    public void write(com.google.gson.stream.JsonWriter out, Long value) throws IOException {
+        var instant = Instant.ofEpochSecond(value);
+        out.value(instant.toString());
+
+    }
+
+    @Override
+    public Long read(com.google.gson.stream.JsonReader in) throws IOException {
+        var instant = Instant.parse(in.nextString());
+        return instant.getEpochSecond();
+    }
+}
 
 @Entity(tableName = "locations")
 public class Location {
@@ -24,19 +44,30 @@ public class Location {
     public long id = 0;
 
     @NonNull
-    public String name;
+    public String public_code;
     public double latitude;
     public double longitude;
-    public String icon;
+    public String label;
 
-    public Location(@NonNull String name, double latitude, double longitude, String icon) {
-        this.name = name;
+    @JsonAdapter(TimestampAdapter.class)
+    @SerializedName(value = "created_at", alternate = "createAt")
+    public long created_at;
+
+    @JsonAdapter(TimestampAdapter.class)
+    @SerializedName(value = "updated_at", alternate = "updatedAt")
+    public long updated_at;
+
+    public Location(@NonNull String public_code, double latitude, double longitude, String label) {
+        this.public_code = public_code;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.icon = icon;
+        this.label = label;
+        this.created_at = 0;
+        this.updated_at = 0;
         Log.d("LOCATIONLIST", this.toString());
     }
 
+    // TODO: fix to work with new fields
     public static List<Location> loadJSON(Context context, String path) {
         try {
             InputStream input = context.getAssets().open(path);
@@ -55,10 +86,10 @@ public class Location {
     @Override
     public String toString() {
         return "Location{" +
-                "name='" + name + '\'' +
+                "public_code='" + public_code + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", icon='" + icon + '\'' +
+                ", label='" + label + '\'' +
                 '}';
     }
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DataEntryPage">
+    tools:context=".activity.DataEntryPage">
 
     <EditText
         android:id="@+id/mock_input"

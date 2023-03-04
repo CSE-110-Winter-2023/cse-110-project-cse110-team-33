@@ -1,4 +1,4 @@
-package com.example.socialcompass;
+package com.example.socialcompass.view;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +13,10 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.socialcompass.R;
+import com.example.socialcompass.model.Location;
+
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -146,11 +148,11 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
         public void setLocation(Location location) {
             this.location = location;
-            this.locName.setText(location.name);
+            this.locName.setText(location.public_code);
             this.locLat.setText(new DecimalFormat("##.##").format(location.latitude));
             this.locLong.setText(new DecimalFormat("##.##").format(location.longitude));
             for (int i = 0; i < items.length; i++) {
-                if (location.icon.equals(items[i])) {
+                if (location.label.equals(items[i])) {
                     this.locIcon.setSelection(i);
                 }
             }

@@ -1,4 +1,4 @@
-package com.example.socialcompass;
+package com.example.socialcompass.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -18,7 +18,7 @@ public interface LocationDao {
     @Query("SELECT * FROM `locations` WHERE `id`=:id")
     Location get(long id);
 
-    @Query("SELECT * FROM `locations` ORDER BY `name`")
+    @Query("SELECT * FROM `locations` ORDER BY public_code")
     List<Location> getAll();
 
     @Update
@@ -30,9 +30,9 @@ public interface LocationDao {
     @Insert
     List<Long> insertAll(List<Location> locations);
 
-    @Query("SELECT * FROM `locations` ORDER BY `name`")
+    @Query("SELECT * FROM `locations` ORDER BY public_code")
     LiveData<List<Location>> getAllLive();
 
-    @Query("SELECT `name` + 1 FROM `locations` ORDER BY `name` DESC LIMIT 1")
+    @Query("SELECT public_code + 1 FROM `locations` ORDER BY public_code DESC LIMIT 1")
     int getOrderForAppend();
 }

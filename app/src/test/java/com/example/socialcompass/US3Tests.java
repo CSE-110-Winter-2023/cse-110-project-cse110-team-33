@@ -19,6 +19,10 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 //import androidx.test.runner.AndroidJUnit4;
 
+import com.example.socialcompass.activity.LocationListActivity;
+import com.example.socialcompass.model.Location;
+import com.example.socialcompass.model.LocationDatabase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +35,7 @@ import java.util.List;
 public class US3Tests {
 
     LocationDatabase testDb;
-    LocationDao LocationDao;
+    com.example.socialcompass.model.LocationDao LocationDao;
 
     private static void forceLayout(RecyclerView recyclerView) {
         recyclerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -78,10 +82,10 @@ public class US3Tests {
 
         Location location = LocationDao.get(id);
         assertEquals(id, location.id);
-        assertEquals(insertedlocation.name, location.name);
+        assertEquals(insertedlocation.public_code, location.public_code);
         assertEquals(insertedlocation.latitude, location.latitude, 0.1);
         assertEquals(insertedlocation.longitude, location.longitude, 0.1);
-        assertEquals(insertedlocation.icon, location.icon);
+        assertEquals(insertedlocation.label, location.label);
     }
 
     @Test
@@ -90,13 +94,13 @@ public class US3Tests {
         long id = LocationDao.insert(location);
 
         location = LocationDao.get(id);
-        location.name = "No longer Bill's house";
+        location.public_code = "No longer Bill's house";
         int locationsUpdated = LocationDao.update(location);
         assertEquals(1, locationsUpdated);
 
         location = LocationDao.get(id);
         assertNotNull(location);
-        assertEquals("No longer Bill's house", location.name);
+        assertEquals("No longer Bill's house", location.public_code);
 
     }
 
@@ -133,7 +137,7 @@ public class US3Tests {
             locName.clearFocus();
 
             Location editedLocation = LocationDao.get(id);
-            assertEquals(newText, editedLocation.name);
+            assertEquals(newText, editedLocation.public_code);
         });
     }
 
@@ -174,7 +178,7 @@ public class US3Tests {
             List<Location> locationsAfter = LocationDao.getAll();
 
             assertEquals(locationsBefore.size()+1, locationsAfter.size());
-            assertEquals(newName, locationsAfter.get(0).name);
+            assertEquals(newName, locationsAfter.get(0).public_code);
         });
     }
 

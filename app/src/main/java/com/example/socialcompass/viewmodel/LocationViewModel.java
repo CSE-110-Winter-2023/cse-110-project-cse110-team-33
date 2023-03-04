@@ -1,12 +1,15 @@
-package com.example.socialcompass;
+package com.example.socialcompass.viewmodel;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.socialcompass.model.Location;
+import com.example.socialcompass.model.LocationDao;
+import com.example.socialcompass.model.LocationDatabase;
 
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class LocationViewModel extends AndroidViewModel {
     }
 
     public void updateName(Location location, String newName) {
-        location.name = newName;
+        location.public_code = newName;
         locationDao.update(location);
     }
 
@@ -50,7 +53,7 @@ public class LocationViewModel extends AndroidViewModel {
     }
 
     public void updateIcon(Location location, String newIcon) {
-        location.icon = newIcon;
+        location.label = newIcon;
         locationDao.update(location);
     }
 

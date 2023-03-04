@@ -4,7 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/displayName"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="NAME"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/publicCode"
+        app:layout_constraintTop_toBottomOf="@id/displayName"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="public code"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/privateCode"
+        app:layout_constraintTop_toBottomOf="@id/publicCode"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="private code"/>
 
     <TextView
         android:id="@+id/orientationDisplay"
