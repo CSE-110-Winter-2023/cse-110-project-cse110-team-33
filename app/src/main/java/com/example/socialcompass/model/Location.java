@@ -107,4 +107,13 @@ public class Location {
                 ", label='" + label + '\'' +
                 '}';
     }
+
+
+    public static Location fromJSON(String json) {
+        return new Gson().fromJson(json, Location.class);
+    }
+
+    public String toJSON() {
+        return new Gson().toJson(this);
+    }
 }
