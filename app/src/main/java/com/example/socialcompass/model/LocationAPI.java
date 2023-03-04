@@ -165,5 +165,40 @@ public class LocationAPI {
         var future = executor.submit(() -> delete(loc, private_code));
         return future;
     }
+
+
+    @WorkerThread
+    public String patch(Location loc, String private_code) {
+
+        JsonElement jsonElement = new Gson().toJsonTree(loc);
+        JsonObject jsonObject = (JsonObject) jsonElement;
+        jsonObject.remove("created_at");
+        jsonObject.remove("updated_at");
+        jsonObject.remove("public_code");
+        jsonObject.remove("label");
+        jsonObject.addProperty("private_code", private_code);
+        String jsonString = jsonObject.toString();
+
+        var body = RequestBody.create(jsonString, JSON);
+        var request = new Request.Builder()
+                .url("https://socialcompass.goto.ucsd.edu/location/" + loc.public_code)
+                .method("PATCH", body)
+                .build();
+
+        try (var response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            return response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @AnyThread
+    public Future<String> patchAsync(Location loc, String private_code) {
+        var executor = Executors.newSingleThreadExecutor();
+        var future = executor.submit(() -> patch(loc, private_code));
+        return future;
+    }
 }
 

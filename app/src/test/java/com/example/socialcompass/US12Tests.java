@@ -13,6 +13,8 @@ import static org.junit.Assert.*;
 
 public class US12Tests {
 
+    // TODO: not sure why tests need to be separately run
+
     String public_code = "a40bc854-249f-4872-a114-a468fe413dab";
     String private_code = "a5f0aafe-4eef-45d4-83dc-ba8f7a3fdb1c";
     Location location;
@@ -50,6 +52,20 @@ public class US12Tests {
         System.out.println(result.get().toString());
 
         assertEquals(location.label, result.get().label);
+
+    }
+
+    @Test
+    public void patchLocation() throws ExecutionException, InterruptedException {
+        LocationAPI api = LocationAPI.provide();
+
+        location.latitude = 64;
+
+        Future<String> result = api.patchAsync(location, private_code);
+        Location locationFromApi = Location.fromJSON(result.get());
+
+        assertEquals(location.latitude, locationFromApi.latitude, 0.01);
+
 
     }
 
