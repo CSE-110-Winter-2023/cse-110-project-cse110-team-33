@@ -1,8 +1,10 @@
 package com.example.socialcompass.activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Database;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,6 +26,7 @@ import java.util.concurrent.Future;
 public class FirstLaunchActivity extends AppCompatActivity {
 
     EditText displayNameInput;
+    EditText publicIDInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +34,43 @@ public class FirstLaunchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_first_launch);
 
         displayNameInput = findViewById(R.id.displayNameInput);
+        publicIDInput = findViewById(R.id.publicIDInput);
+    }
+
+    public boolean validNewPublicID(String public_code) throws ExecutionException, InterruptedException {
+        LocationAPI api = LocationAPI.provide();
+        Future<Location> result = api.getAsync(public_code);
+        var toCheck = result.get().public_code;
+        if(toCheck == null){
+            return true;
+        }
+        return false;
+    }
+
+    public static String showAlert(Activity activity, String message){
+        android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
+
+        alertBuilder
+                .setTitle("Alert!")
+                .setMessage(message)
+                .setPositiveButton("Ok", (dialog, id) -> {
+                    dialog.cancel();
+                })
+                .setCancelable(true);
+
+        android.app.AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
+        return message;
     }
 
     public void createUser(View view) throws ExecutionException, InterruptedException {
         String display_name = displayNameInput.getText().toString().trim();
-        String public_code = UUID.randomUUID().toString();
+        String public_code = publicIDInput.getText().toString().trim();
+        if(!validNewPublicID(public_code)){
+            showAlert(this, "That Public ID is already taken. Please try again!");
+            return;
+        }
+
         String private_code = UUID.randomUUID().toString();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
