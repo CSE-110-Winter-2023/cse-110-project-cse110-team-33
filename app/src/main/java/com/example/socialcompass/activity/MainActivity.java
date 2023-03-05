@@ -191,12 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    public void onGoToDataEntryPage(View view) {
-//        Intent intent = new Intent(this, DataEntryPage.class);
-//        startActivityForResult(intent, REQUEST_CODE_DEP);
-//    }
-
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -221,27 +215,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CODE_DEP) {
-//            int orientation = data.getIntExtra("orientation", -1);
-//            Log.d("MAIN", String.valueOf(orientation));
-//            if (orientation != -1) {
-//                MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
-//                mockOrientation.setValue((float) (((-orientation*Math.PI)/180) % Math.PI));
-//                orientationService.setMockOrientationService(mockOrientation);
-//            }
-//            icons.clear();
-//            updateLocation();
-//            updateOrientation();
-//        }
-//        else if (requestCode == REQUEST_CODE_LLA){
-//            //super.onResume();
-//            orientationService.registerSensorListeners();
-//            locationService.registerLocationListener();
-//            locationList = locationDao.getAll();
-//            icons.clear();
-//            updateLocation();
-//            updateOrientation();
-//        }
         if (requestCode == REQUEST_CODE_FLA) {
             getUID();
         }
@@ -278,4 +251,8 @@ public class MainActivity extends AppCompatActivity {
         updateOrientation();
     }
 
+    public void launchFriendListActivity(View view) {
+        Intent intent = new Intent(this, FriendListActivity.class);
+        startActivity(intent);
+    }
 }

@@ -108,8 +108,6 @@ public class LocationRepository {
     }
 
     public void upsertRemote(String public_code, String private_code, Double latitude, Double longitude) {
-//        Location location = new Location("public_code",
-//                latitude, longitude, "label");
         api.patchAsync(public_code, private_code, latitude, longitude);
     }
 

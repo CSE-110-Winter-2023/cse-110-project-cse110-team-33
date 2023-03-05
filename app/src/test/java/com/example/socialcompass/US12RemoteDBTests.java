@@ -5,15 +5,16 @@ import com.example.socialcompass.model.LocationAPI;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import static org.junit.Assert.*;
 
-public class US12Tests {
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-    // TODO: not sure why tests need to be separately run
+@RunWith(AndroidJUnit4.class)
+public class US12RemoteDBTests {
 
     String public_code = "a40bc854-249f-4872-a114-a468fe413dab";
     String private_code = "a5f0aafe-4eef-45d4-83dc-ba8f7a3fdb1c";
@@ -86,6 +87,5 @@ public class US12Tests {
         System.out.println(result.get().toString());
 
         assertNull(result.get().public_code);
-
     }
 }

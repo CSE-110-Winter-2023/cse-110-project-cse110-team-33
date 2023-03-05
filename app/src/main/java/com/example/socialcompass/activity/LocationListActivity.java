@@ -113,7 +113,7 @@ public class LocationListActivity extends AppCompatActivity {
 //        });
 
 
-        Button addBtn = popupView.findViewById(R.id.addBtn);
+        Button addBtn = popupView.findViewById(R.id.deleteBtn);
 //        addBtn.setOnClickListener(this::onAddTodoClicked);
 
         addBtn.setOnClickListener(new View.OnClickListener() {

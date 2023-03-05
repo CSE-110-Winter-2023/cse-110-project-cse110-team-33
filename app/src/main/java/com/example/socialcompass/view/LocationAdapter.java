@@ -106,7 +106,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             });
             this.locLat = itemView.findViewById(R.id.locLat);
             this.locLong = itemView.findViewById(R.id.locLong);
-            this.removeBtn = itemView.findViewById(R.id.addBtn);
+            this.removeBtn = itemView.findViewById(R.id.deleteBtn);
 
             this.removeBtn.setOnClickListener(view -> {
                 if(onDeleteBtnClicked == null) return;
