@@ -60,8 +60,9 @@ public class US12Tests {
         LocationAPI api = LocationAPI.provide();
 
         location.latitude = 64;
+        location.longitude = 64;
 
-        Future<String> result = api.patchAsync(location, private_code);
+        Future<String> result = api.patchAsync(public_code, private_code, location.latitude, location.longitude);
         Location locationFromApi = Location.fromJSON(result.get());
 
         assertEquals(location.latitude, locationFromApi.latitude, 0.01);

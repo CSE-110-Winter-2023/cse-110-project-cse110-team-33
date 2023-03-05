@@ -1,6 +1,7 @@
 package com.example.socialcompass.model;
 
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.MainThread;
@@ -130,20 +131,17 @@ public class LocationAPI {
 
 
     @WorkerThread
-    public String patch(Location loc, String private_code) {
+    public String patch(String public_code, String private_code, Double latitude, Double longitude) {
 
-        JsonElement jsonElement = new Gson().toJsonTree(loc);
-        JsonObject jsonObject = (JsonObject) jsonElement;
-        jsonObject.remove("created_at");
-        jsonObject.remove("updated_at");
-        jsonObject.remove("public_code");
-        jsonObject.remove("label");
+        JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("private_code", private_code);
+        jsonObject.addProperty("latitude", latitude);
+        jsonObject.addProperty("longitude", longitude);
         String jsonString = jsonObject.toString();
 
         var body = RequestBody.create(jsonString, JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + loc.public_code)
+                .url("https://socialcompass.goto.ucsd.edu/location/" + public_code)
                 .method("PATCH", body)
                 .build();
 
@@ -157,9 +155,9 @@ public class LocationAPI {
     }
 
     @AnyThread
-    public Future<String> patchAsync(Location loc, String private_code) {
+    public Future<String> patchAsync(String public_code, String private_code, Double latitude, Double longitude) {
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> patch(loc, private_code));
+        var future = executor.submit(() -> patch(public_code, private_code, latitude, longitude));
         return future;
     }
 }

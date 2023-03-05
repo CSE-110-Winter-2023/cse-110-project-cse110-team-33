@@ -48,11 +48,10 @@ public class FirstLaunchActivity extends AppCompatActivity {
         editor.apply();
 
         LocationAPI api = LocationAPI.provide();
-        Future<String> result = api.putAsync(new Location(public_code, -1, -1,
+        api.putAsync(new Location(public_code, -1, -1,
                 display_name), private_code);
-//
-//
-//        Log.d("PUBLICCODE", result.get());
+
+        // check if profile was created? alert if not
 
         finish();
     }

@@ -137,7 +137,10 @@ public class MainActivity extends AppCompatActivity {
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
 //            displayIcons(loc);
             // patch location on remote
-            repo.upsertRemote(loc.first, loc.second, private_code);
+            repo.upsertRemote(public_code,
+                    private_code,
+                    loc.first,
+                    loc.second);
 
         });
     }

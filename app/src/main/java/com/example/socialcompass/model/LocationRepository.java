@@ -1,5 +1,7 @@
 package com.example.socialcompass.model;
 
+import android.util.Pair;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -105,10 +107,10 @@ public class LocationRepository {
         return location;
     }
 
-    public void upsertRemote(double latitude, double longitude, String private_code) {
-        Location location = new Location("public_code",
-                latitude, longitude, "label");
-        api.patchAsync(location, private_code);
+    public void upsertRemote(String public_code, String private_code, Double latitude, Double longitude) {
+//        Location location = new Location("public_code",
+//                latitude, longitude, "label");
+        api.patchAsync(public_code, private_code, latitude, longitude);
     }
 
 }
