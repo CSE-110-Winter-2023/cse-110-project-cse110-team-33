@@ -1,16 +1,25 @@
 package com.example.socialcompass.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Database;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import com.example.socialcompass.R;
+import com.example.socialcompass.model.Location;
+import com.example.socialcompass.model.LocationAPI;
+import com.example.socialcompass.model.LocationDao;
+import com.example.socialcompass.model.LocationDatabase;
+import com.example.socialcompass.model.LocationRepository;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class FirstLaunchActivity extends AppCompatActivity {
 
@@ -24,7 +33,7 @@ public class FirstLaunchActivity extends AppCompatActivity {
         displayNameInput = findViewById(R.id.displayNameInput);
     }
 
-    public void createUser(View view) {
+    public void createUser(View view) throws ExecutionException, InterruptedException {
         String display_name = displayNameInput.getText().toString().trim();
         String public_code = UUID.randomUUID().toString();
         String private_code = UUID.randomUUID().toString();
@@ -37,6 +46,13 @@ public class FirstLaunchActivity extends AppCompatActivity {
         editor.putString("display_name", display_name);
 
         editor.apply();
+
+        LocationAPI api = LocationAPI.provide();
+        Future<String> result = api.putAsync(new Location(public_code, -1, -1,
+                display_name), private_code);
+//
+//
+//        Log.d("PUBLICCODE", result.get());
 
         finish();
     }

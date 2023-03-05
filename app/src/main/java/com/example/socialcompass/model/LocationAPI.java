@@ -37,44 +37,6 @@ public class LocationAPI {
         return instance;
     }
 
-    /**
-     * An example of sending a GET request to the server.
-     *
-     * The /echo/{msg} endpoint always just returns {"message": msg}.
-     *
-     * This method should can be called on a background thread (Android
-     * disallows network requests on the main thread).
-     */
-//    @WorkerThread
-//    public String echo(String msg) {
-//        // URLs cannot contain spaces, so we replace them with %20.
-//        String encodedMsg = msg.replace(" ", "%20");
-//
-//        var request = new Request.Builder()
-//                .url("https://socialcompass.goto.ucsd.edu/echo/" + encodedMsg)
-//                .method("GET", null)
-//                .build();
-//
-//        try (var response = client.newCall(request).execute()) {
-//            assert response.body() != null;
-//            var body = response.body().string();
-//            Log.i("ECHO", body);
-//            return body;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    @AnyThread
-//    public Future<String> echoAsync(String msg) {
-//        var executor = Executors.newSingleThreadExecutor();
-//        var future = executor.submit(() -> echo(msg));
-//
-//        // We can use future.get(1, SECONDS) to wait for the result.
-//        return future;
-//    }
-
     @WorkerThread
     public Location get(String public_code) {
 

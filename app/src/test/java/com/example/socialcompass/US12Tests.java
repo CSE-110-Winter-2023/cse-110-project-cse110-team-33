@@ -76,4 +76,15 @@ public class US12Tests {
         Future<String> result = api.deleteAsync(location, private_code);
         assertEquals("{\"message\":\"Location deleted.\"}", result.get());
     }
+
+    @Test
+    public void getNonexistentLocation() throws ExecutionException, InterruptedException {
+        LocationAPI api = LocationAPI.provide();
+
+        Future<Location> result = api.getAsync(public_code);
+        System.out.println(result.get().toString());
+
+        assertNull(result.get().public_code);
+
+    }
 }

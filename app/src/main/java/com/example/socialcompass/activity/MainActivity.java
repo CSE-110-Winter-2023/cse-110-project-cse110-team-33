@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import android.Manifest;
 
 
+import com.example.socialcompass.model.LocationAPI;
+import com.example.socialcompass.model.LocationRepository;
 import com.example.socialcompass.utility.AngleCalculation;
 import com.example.socialcompass.model.Location;
 import com.example.socialcompass.model.LocationDao;
@@ -45,10 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static int REQUEST_CODE_DEP = 24;
     private static int REQUEST_CODE_LLA = 25;
+    private static int REQUEST_CODE_FLA = 27;
 
     private List<Location> locationList;
     private Map<Location, ImageView> icons;
     private LocationDao locationDao;
+
+    private LocationRepository repo;
+    private LocationAPI api;
 
     private String public_code;
     private String private_code;
@@ -65,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         locationDao = db.locationDao();
 //        locationList = locationDao.getAll();
 
+        api = LocationAPI.provide();
+        repo = new LocationRepository(locationDao, api);
+
         icons = new HashMap<>();
 
         compassDisplay = findViewById(R.id.compassDisplay);
@@ -78,6 +88,17 @@ public class MainActivity extends AppCompatActivity {
         orientationService = new OrientationService(this);
         updateOrientation();
 
+        getUID();
+
+        if (public_code.equals("null")) {
+            Intent intent = new Intent(this, FirstLaunchActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_FLA);
+        }
+
+
+    }
+
+    private void getUID() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         public_code = preferences.getString("public_code", "null");
         private_code = preferences.getString("private_code", "null");
@@ -91,16 +112,7 @@ public class MainActivity extends AppCompatActivity {
         publicCode.setText(public_code);
         privateCode.setText(private_code);
 
-        if (public_code.equals("null")) {
-            Intent intent = new Intent(this, FirstLaunchActivity.class);
-            startActivity(intent);
-        }
-
-
-    }
-
-    private void getUID() {
-        // if UID doesn't exist, start firstlaunchactivity
+        Log.d("PUBLICCODE", public_code);
     }
 
     private void updateOrientation() {
@@ -124,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
         locationService.getLocation().observe(this, loc ->{
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
 //            displayIcons(loc);
+            // patch location on remote
+            repo.upsertRemote(loc.first, loc.second, private_code);
 
         });
     }
@@ -225,6 +239,9 @@ public class MainActivity extends AppCompatActivity {
 //            updateLocation();
 //            updateOrientation();
 //        }
+        if (requestCode == REQUEST_CODE_FLA) {
+            getUID();
+        }
         if (requestCode != REQUEST_CODE_LLA) return;
 
         if (data != null) {

@@ -81,5 +81,35 @@ public class LocationRepository {
     // Remote Methods
     // ==============
 
+    public LiveData<Location> getRemote(String public_code) throws ExecutionException, InterruptedException {
+        Location initialLoc = api.getAsync(public_code).get();
+        if (initialLoc.public_code == null) return null;
+
+        var location = new MutableLiveData<Location>();
+        location.setValue(initialLoc);
+
+        var executor = Executors.newSingleThreadScheduledExecutor();
+        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(() -> {
+            Future<Location> future = api.getAsync(public_code);
+            try {
+                location.postValue(future.get(1, TimeUnit.SECONDS));
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+        }, 0, 3, TimeUnit.SECONDS);
+
+        return location;
+    }
+
+    public void upsertRemote(double latitude, double longitude, String private_code) {
+        Location location = new Location("public_code",
+                latitude, longitude, "label");
+        api.patchAsync(location, private_code);
+    }
+
 }
 
