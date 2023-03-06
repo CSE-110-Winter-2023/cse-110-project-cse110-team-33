@@ -1,5 +1,6 @@
 package com.example.socialcompass.model;
 
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.lifecycle.LiveData;
@@ -38,11 +39,12 @@ public class LocationRepository {
             if (theirLoc == null) return; // do nothing
             if (ourLoc == null || ourLoc.updated_at < theirLoc.updated_at) {
                 upsertLocal(theirLoc);
+                Log.d("LOCCHANGED", theirLoc.toString());
             }
         };
 
         // If we get a local update, pass it on.
-//        loc.addSource(getLocal(public_code), loc::postValue);
+        loc.addSource(getLocal(public_code), loc::postValue);
         // If we get a remote update, update the local version (triggering the above observer)
         loc.addSource(getRemote(public_code), updateFromRemote);
 

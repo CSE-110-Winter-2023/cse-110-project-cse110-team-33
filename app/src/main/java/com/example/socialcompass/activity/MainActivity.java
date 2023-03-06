@@ -4,7 +4,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +30,7 @@ import com.example.socialcompass.model.LocationDatabase;
 import com.example.socialcompass.utility.LocationService;
 import com.example.socialcompass.utility.OrientationService;
 import com.example.socialcompass.R;
+import com.example.socialcompass.viewmodel.LocationViewModel;
 
 
 import java.util.HashMap;
@@ -95,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, REQUEST_CODE_FLA);
         }
 
-
+        testLocationVM();
     }
 
     private void getUID() {
@@ -254,6 +257,34 @@ public class MainActivity extends AppCompatActivity {
     public void launchFriendListActivity(View view) {
         Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
+    }
+
+    public void testLocationVM() {
+
+        var locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
+
+        LiveData<List<Location>> fromLocal = repo.getAllLocal();
+        fromLocal.observe(this, listEntity -> {
+            fromLocal.removeObservers(this);
+
+            Log.d("LOCALLIST", listEntity.toString());
+            // TODO: create icons (map location to icon)
+
+            var locations = locationVM.getLocationsLive(listEntity);
+
+            for (var loc : locations) {
+                loc.observe(this, this::onLocationChanged);
+            }
+        });
+
+
+
+    }
+
+    private void onLocationChanged(Location location) {
+        Log.d("LOCCHANGED2", location.toString());
+
+        // TODO: update icons
     }
 
 }
