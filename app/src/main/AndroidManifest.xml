@@ -26,7 +26,7 @@
             android:name=".activity.DataEntryPage"
             android:exported="false" />
         <activity
-            android:name=".activity.LocationListActivity"
+            android:name=".activity.OldLocationListActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

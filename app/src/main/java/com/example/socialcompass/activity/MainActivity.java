@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchLocationListActivity(View view) {
-        Intent intent = new Intent(this, LocationListActivity.class);
+        Intent intent = new Intent(this, OldLocationListActivity.class);
         startActivityForResult(intent, REQUEST_CODE_LLA);
 
     }
@@ -201,16 +201,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        orientationService.registerSensorListeners();
-//        locationService.registerLocationListener();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orientationService.registerSensorListeners();
+        locationService.registerLocationListener();
 //        locationList = locationDao.getAll();
 //        icons.clear();
-//        updateLocation();
-//        updateOrientation();
-//    }
+        updateLocation();
+        updateOrientation();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -255,4 +255,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
     }
+
 }

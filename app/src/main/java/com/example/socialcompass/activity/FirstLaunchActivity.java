@@ -18,6 +18,7 @@ import com.example.socialcompass.model.LocationAPI;
 import com.example.socialcompass.model.LocationDao;
 import com.example.socialcompass.model.LocationDatabase;
 import com.example.socialcompass.model.LocationRepository;
+import com.example.socialcompass.utility.AlertBuilder;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -47,27 +48,13 @@ public class FirstLaunchActivity extends AppCompatActivity {
         return false;
     }
 
-    public static String showAlert(Activity activity, String message){
-        android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
-        alertBuilder
-                .setTitle("Alert!")
-                .setMessage(message)
-                .setPositiveButton("Ok", (dialog, id) -> {
-                    dialog.cancel();
-                })
-                .setCancelable(true);
-
-        android.app.AlertDialog alertDialog = alertBuilder.create();
-        alertDialog.show();
-        return message;
-    }
 
     public void createUser(View view) throws ExecutionException, InterruptedException {
         String display_name = displayNameInput.getText().toString().trim();
         String public_code = publicIDInput.getText().toString().trim();
         if(!validNewPublicID(public_code)){
-            showAlert(this, "That Public ID is already taken. Please try again!");
+            AlertBuilder.showAlert(this, "That Public ID is already taken. Please try again!");
             return;
         }
 

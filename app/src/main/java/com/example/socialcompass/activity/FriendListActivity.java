@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import com.example.socialcompass.R;
 import com.example.socialcompass.model.Location;
+import com.example.socialcompass.utility.AlertBuilder;
 import com.example.socialcompass.view.FriendAdapter;
 import com.example.socialcompass.viewmodel.FriendViewModel;
 
@@ -62,7 +63,7 @@ public class FriendListActivity extends AppCompatActivity {
         String UID = UIDInput.getText().toString().trim();
         var newLocation = viewModel.insertNewLocation(UID);
         if (newLocation == null) {
-            showAlert(this, "Not a valid UID");
+            AlertBuilder.showAlert(this, "Not a valid UID");
             return;
         }
         newLocation.observe(this, locEntity -> {
@@ -71,19 +72,4 @@ public class FriendListActivity extends AppCompatActivity {
         });
     }
 
-    public static String showAlert(Activity activity, String message){
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
-
-        alertBuilder
-                .setTitle("Alert!")
-                .setMessage(message)
-                .setPositiveButton("Ok", (dialog, id) -> {
-                    dialog.cancel();
-                })
-                .setCancelable(true);
-
-        AlertDialog alertDialog = alertBuilder.create();
-        alertDialog.show();
-        return message;
-    }
 }

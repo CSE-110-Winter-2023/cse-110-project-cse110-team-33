@@ -31,23 +31,23 @@ public class LocationRepository {
     // ==============
 
     public LiveData<Location> getSynced(String public_code) throws ExecutionException, InterruptedException {
-//        var loc = new MediatorLiveData<Location>();
-//
-//        Observer<Location> updateFromRemote = theirLoc -> {
-//            var ourLoc = loc.getValue();
-//            if (theirLoc == null) return; // do nothing
-//            if (ourLoc == null || ourLoc.updated_at < theirLoc.updated_at) {
-//                upsertLocal(theirLoc);
-//            }
-//        };
-//
-//        // If we get a local update, pass it on.
+        var loc = new MediatorLiveData<Location>();
+
+        Observer<Location> updateFromRemote = theirLoc -> {
+            var ourLoc = loc.getValue();
+            if (theirLoc == null) return; // do nothing
+            if (ourLoc == null || ourLoc.updated_at < theirLoc.updated_at) {
+                upsertLocal(theirLoc);
+            }
+        };
+
+        // If we get a local update, pass it on.
 //        loc.addSource(getLocal(public_code), loc::postValue);
-//        // If we get a remote update, update the local version (triggering the above observer)
-//        loc.addSource(getRemote(public_code), updateFromRemote);
-//
-//        return loc;
-        return null;
+        // If we get a remote update, update the local version (triggering the above observer)
+        loc.addSource(getRemote(public_code), updateFromRemote);
+
+        return loc;
+//        return null;
     }
 
     public void upsertSynced(Location loc) {

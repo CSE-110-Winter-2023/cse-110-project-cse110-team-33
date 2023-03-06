@@ -13,12 +13,12 @@ import com.example.socialcompass.model.LocationDatabase;
 
 import java.util.List;
 
-public class LocationViewModel extends AndroidViewModel {
+public class OldLocationViewModel extends AndroidViewModel {
 
     private LiveData<List<Location>> locations;
     private final LocationDao locationDao;
 
-    public LocationViewModel(@NonNull Application application) {
+    public OldLocationViewModel(@NonNull Application application) {
         super(application);
         Context context = getApplication().getApplicationContext();
         LocationDatabase db = LocationDatabase.getSingleton(context);
