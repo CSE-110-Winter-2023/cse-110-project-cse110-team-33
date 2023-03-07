@@ -1,4 +1,4 @@
-package com.example.socialcompass;
+package com.example.socialcompass.model;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
@@ -7,15 +7,13 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.room.Database;
 import androidx.room.Room;
-import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.List;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Location.class}, version = 1)
+@Database(entities = {Location.class}, version = 2)
 public abstract class LocationDatabase extends RoomDatabase {
 
     private static LocationDatabase singleton = null;

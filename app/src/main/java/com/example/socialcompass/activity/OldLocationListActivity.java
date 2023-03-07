@@ -1,4 +1,4 @@
-package com.example.socialcompass;
+package com.example.socialcompass.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,10 +9,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,15 +18,18 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-import java.util.List;
+import com.example.socialcompass.model.Location;
+import com.example.socialcompass.view.OldLocationAdapter;
+import com.example.socialcompass.viewmodel.OldLocationViewModel;
+import com.example.socialcompass.R;
+
 import java.util.Optional;
 
-public class LocationListActivity extends AppCompatActivity {
+public class OldLocationListActivity extends AppCompatActivity {
 
     public RecyclerView recyclerView;
-    public LocationViewModel viewModel;
+    public OldLocationViewModel viewModel;
     public View popupView;
 
 
@@ -39,9 +40,9 @@ public class LocationListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
         viewModel = new ViewModelProvider(this)
-                .get(LocationViewModel.class);
+                .get(OldLocationViewModel.class);
 
-        LocationAdapter adapter = new LocationAdapter();
+        OldLocationAdapter adapter = new OldLocationAdapter();
         adapter.setHasStableIds(true);
         adapter.setOnLocationNameChanged(viewModel::updateName);
         adapter.setOnDeleteBtnClickedHandler(viewModel::deleteLocation);
@@ -112,7 +113,7 @@ public class LocationListActivity extends AppCompatActivity {
 //        });
 
 
-        Button addBtn = popupView.findViewById(R.id.addBtn);
+        Button addBtn = popupView.findViewById(R.id.deleteBtn);
 //        addBtn.setOnClickListener(this::onAddTodoClicked);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -174,14 +175,14 @@ public class LocationListActivity extends AppCompatActivity {
         Optional<Integer> mock_int_input = parseMock(mock_string_input);
 
         if(!mock_int_input.isPresent()){
-            LocationListActivity.showAlert(this,"This is not a number");
+            OldLocationListActivity.showAlert(this,"This is not a number");
             return;
         }
 
         int mock_value = mock_int_input.get();
 
         if(!checkIfValidInput(mock_value)){
-            LocationListActivity.showAlert(this, "Please enter a number between 0 and 359!");
+            OldLocationListActivity.showAlert(this, "Please enter a number between 0 and 359!");
             return;
         }
 

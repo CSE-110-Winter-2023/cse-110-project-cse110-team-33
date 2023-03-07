@@ -1,27 +1,23 @@
 package com.example.socialcompass;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowLocationManager;
 
 import static org.junit.Assert.*;
 
-import android.app.Application;
-import android.location.LocationManager;
-import android.util.Log;
 import android.util.Pair;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.MutableLiveData;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.rule.GrantPermissionRule;
 
+import com.example.socialcompass.activity.MainActivity;
+import com.example.socialcompass.utility.AngleCalculation;
+import com.example.socialcompass.utility.LocationService;
+import com.example.socialcompass.utility.OrientationService;
 
 
 /**
