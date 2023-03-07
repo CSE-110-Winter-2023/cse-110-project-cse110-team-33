@@ -19,7 +19,6 @@ public class FriendViewModel extends AndroidViewModel {
 
     private final LocationRepository repo;
 
-
     public FriendViewModel(@NonNull Application application) {
         super(application);
         var context = getApplication().getApplicationContext();

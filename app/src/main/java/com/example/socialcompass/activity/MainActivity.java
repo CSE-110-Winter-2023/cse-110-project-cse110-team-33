@@ -1,8 +1,12 @@
 package com.example.socialcompass.activity;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -36,7 +40,7 @@ import com.example.socialcompass.viewmodel.LocationViewModel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -109,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView displayName = findViewById(R.id.displayName);
         TextView publicCode = findViewById(R.id.publicCode);
+        //System.out.println(publicCode.hashCode());
         TextView privateCode = findViewById(R.id.privateCode);
 
         displayName.setText(display_name);
@@ -268,17 +273,70 @@ public class MainActivity extends AppCompatActivity {
             fromLocal.removeObservers(this);
 
             Log.d("LOCALLIST", listEntity.toString());
-            // TODO: create icons (map location to icon)
+            // TODO: create icons (map location to icon
+
+
+            LiveData<Location> self_location;
 
             var locations = locationVM.getLocationsLive(listEntity);
+            try {
+                self_location = getSelfLocation();
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+
+            double angle;
+            double mockRadius = 150.0;
+            double desiredX;
+            double desiredY;
+            double desiredXOffSet;
+            double desiredYOffSet;
+
+            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT
+            );
+
+//            params.topToTop = ConstraintSet.PARENT_ID;
+//            params.leftToLeft = ConstraintSet.PARENT_ID;
+//            params.rightToRight = ConstraintSet.PARENT_ID;
+//            params.bottomToBottom = ConstraintSet.PARENT_ID;
+
+            //params.setMargins(500, 500, 500, 500);
+            ConstraintLayout test_name_layout = findViewById(R.id.test_name);
+
+            float centerX = test_name_layout.getWidth() / 2f;
+            float centerY = test_name_layout.getHeight() / 2f;
+
+            for (var loc : listEntity) {
+                TextView name_view = new TextView(this);
+                angle = calculator.calculateBearing(self_location.getValue().latitude,
+                        self_location.getValue().longitude,
+                        loc.latitude, loc.longitude);
+                desiredXOffSet = cos(360 - angle) * mockRadius;
+                desiredYOffSet = sin(360 - angle) * mockRadius * -1;
+                desiredX = centerX - desiredXOffSet - name_view.getWidth() / 2f;
+                desiredY = centerY - desiredYOffSet - name_view.getHeight()/ 2f;
+
+
+                name_view.setText(loc.label);
+                name_view.setX((float)desiredX);
+                name_view.setY((float)desiredY);
+                test_name_layout.addView(name_view);
+            }
 
             for (var loc : locations) {
                 loc.observe(this, this::onLocationChanged);
             }
         });
 
+    }
 
-
+    public LiveData<Location> getSelfLocation() throws ExecutionException, InterruptedException {
+        return repo.getRemote(this.public_code);
     }
 
     private void onLocationChanged(Location location) {
