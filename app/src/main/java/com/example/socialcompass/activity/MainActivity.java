@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,6 +21,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
@@ -288,13 +290,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            double angle;
-            double mockRadius = 150.0;
-            double desiredX;
-            double desiredY;
-            double desiredXOffSet;
-            double desiredYOffSet;
-
+//            double angle;
+//            double mockRadius = 150.0;
+//            double desiredX;
+//            double desiredY;
+//            double desiredXOffSet;
+//            double desiredYOffSet;
+            final float[] centerX = {0};
+            final float[] centerY = {0};
+            Context c = this;
             ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.WRAP_CONTENT,
                     ConstraintLayout.LayoutParams.WRAP_CONTENT
@@ -308,25 +312,52 @@ public class MainActivity extends AppCompatActivity {
             //params.setMargins(500, 500, 500, 500);
             ConstraintLayout test_name_layout = findViewById(R.id.test_name);
 
-            float centerX = test_name_layout.getWidth() / 2f;
-            float centerY = test_name_layout.getHeight() / 2f;
+            test_name_layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
-            for (var loc : listEntity) {
-                TextView name_view = new TextView(this);
-                angle = calculator.calculateBearing(self_location.getValue().latitude,
-                        self_location.getValue().longitude,
-                        loc.latitude, loc.longitude);
-                desiredXOffSet = cos(360 - angle) * mockRadius;
-                desiredYOffSet = sin(360 - angle) * mockRadius * -1;
-                desiredX = centerX - desiredXOffSet - name_view.getWidth() / 2f;
-                desiredY = centerY - desiredYOffSet - name_view.getHeight()/ 2f;
+                @Override
+                public void onGlobalLayout() {
+                    test_name_layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
+                    float centerX = 0;
+                    float centerY = 0;
 
-                name_view.setText(loc.label);
-                name_view.setX((float)desiredX);
-                name_view.setY((float)desiredY);
-                test_name_layout.addView(name_view);
-            }
+                    centerX = test_name_layout.getWidth() / 2f;
+                    centerY = test_name_layout.getHeight() / 2f;
+                    double angle;
+                    double mockRadius = 150.0;
+                    double desiredX;
+                    double desiredY;
+                    double desiredXOffSet;
+                    double desiredYOffSet;
+//                    System.out.println(centerX[0]);
+                    for (var loc : listEntity) {
+                        TextView name_view = new TextView(c);
+                        angle = calculator.calculateBearing(self_location.getValue().latitude,
+                                self_location.getValue().longitude,
+                                loc.latitude, loc.longitude);
+                        desiredXOffSet = cos(360 - angle) * mockRadius;
+                        desiredYOffSet = sin(360 - angle) * mockRadius * -1;
+//                        desiredX = centerX - desiredXOffSet - name_view.getWidth() / 2f;
+//                        desiredY = centerY - desiredYOffSet - name_view.getHeight()/ 2f;
+                        name_view.setText(loc.label);
+
+                        ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT
+                        );
+
+                        layoutParams.leftMargin = (int)(centerX - name_view.getWidth() / 2);
+                        layoutParams.topMargin = (int)(centerY - name_view.getHeight() / 2);
+                        name_view.setX(layoutParams.leftMargin);
+                        name_view.setY(layoutParams.topMargin);
+//                        name_view.setX((float)centerX);
+//                        name_view.setY((float)centerY);
+                        System.out.println(layoutParams.topMargin);
+                        test_name_layout.addView(name_view);
+                    }
+                }
+            });
+
 
             for (var loc : locations) {
                 loc.observe(this, this::onLocationChanged);

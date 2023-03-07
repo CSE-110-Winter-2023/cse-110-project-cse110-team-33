@@ -53,10 +53,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.2" />
 
+    <TextView
+        android:id="@+id/test_name_view"
+        android:layout_width="67dp"
+        android:layout_height="168dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="31dp"
+        tools:layout_editor_absoluteY="246dp" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/compassConstraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <ImageView
             android:id="@+id/compassDisplay"
@@ -109,17 +119,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/locationManagerButton" />
-
-    <TextView
-        android:id="@+id/test_name_view"
-        android:layout_width="67dp"
-        android:layout_height="168dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/compassConstraintLayout"
-        app:layout_constraintEnd_toStartOf="@+id/compassConstraintLayout"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/compassConstraintLayout" />
 
     <!--    <Button-->
     <!--        android:id="@+id/dataEntryPage"-->
