@@ -17,7 +17,6 @@ public class DistanceCalculation {
      * Source: https://www.geeksforgeeks.org/program-distance-two-points-earth/
      */
     public double CalculateDistance(double userLat, double userLong, double friendLat, double friendLong) {
-
         double userLatRad = Math.toRadians(userLat);
         double userLongRad = Math.toRadians(userLong);
         double friendLatRad = Math.toRadians(friendLat);
@@ -33,13 +32,5 @@ public class DistanceCalculation {
         double distance = 2 * Math.asin(Math.sqrt(haversine)) * EARTH_RADIUS;
 
         return distance;
-        /*
-        double sinArgument = Math.sin(userLat) * Math.sin(friendLat);
-        double cosArgument = Math.cos(userLat) * Math.cos(friendLat) * Math.cos(friendLong - userLong);
-
-        double distance = Math.acos(sinArgument + cosArgument) * EARTH_RADIUS;
-
-        return distance;
-         */
     }
 }
