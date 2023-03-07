@@ -21,6 +21,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,8 +41,10 @@ import com.example.socialcompass.viewmodel.LocationViewModel;
 
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 
@@ -61,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Location> locationList;
     private Map<Location, ImageView> icons;
+    private Set<TextView> locationSet;
     private LocationDao locationDao;
 
     private LocationRepository repo;
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         repo = new LocationRepository(locationDao, api);
 
         icons = new HashMap<>();
+        locationSet = new HashSet<>();
 
         compassDisplay = findViewById(R.id.compassDisplay);
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
@@ -104,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, REQUEST_CODE_FLA);
         }
 
-        testLocationVM();
+
     }
 
     private void getUID() {
@@ -132,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
             orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159));
             compassConstraintLayout.setRotation((float) - (orientation*180/3.14159));
         });
+
+
+
     }
 
     private void checkLocationPermissions() {
@@ -220,6 +228,11 @@ public class MainActivity extends AppCompatActivity {
 //        icons.clear();
         updateLocation();
         updateOrientation();
+
+        if (!locationSet.isEmpty()) {
+            removeAllIcons();
+        }
+        addAllIcons();
     }
 
     @Override
@@ -266,7 +279,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void testLocationVM() {
+    public void removeAllIcons(){
+        for (var name_view : locationSet){
+            System.out.println(locationSet.size());
+            ViewGroup parent = (ViewGroup) name_view.getParent();
+            parent.removeView(name_view);
+            //locationSet.remove(name_view);
+            System.out.println("Loop over");
+        }
+        locationSet.clear();
+    }
+    public void addAllIcons() {
 
         var locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
 
@@ -289,29 +312,9 @@ public class MainActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
 
-
-//            double angle;
-//            double mockRadius = 150.0;
-//            double desiredX;
-//            double desiredY;
-//            double desiredXOffSet;
-//            double desiredYOffSet;
-            final float[] centerX = {0};
-            final float[] centerY = {0};
+            //update icons
             Context c = this;
-            ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT
-            );
-
-//            params.topToTop = ConstraintSet.PARENT_ID;
-//            params.leftToLeft = ConstraintSet.PARENT_ID;
-//            params.rightToRight = ConstraintSet.PARENT_ID;
-//            params.bottomToBottom = ConstraintSet.PARENT_ID;
-
-            //params.setMargins(500, 500, 500, 500);
             ConstraintLayout test_name_layout = findViewById(R.id.test_name);
-
             test_name_layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
@@ -324,12 +327,12 @@ public class MainActivity extends AppCompatActivity {
                     centerX = test_name_layout.getWidth() / 2f;
                     centerY = test_name_layout.getHeight() / 2f;
                     double angle;
-                    double mockRadius = 150.0;
+                    double mockRadius = 300.0;
                     double desiredX;
                     double desiredY;
                     double desiredXOffSet;
                     double desiredYOffSet;
-//                    System.out.println(centerX[0]);
+
                     for (var loc : listEntity) {
                         TextView name_view = new TextView(c);
                         angle = calculator.calculateBearing(self_location.getValue().latitude,
@@ -337,8 +340,8 @@ public class MainActivity extends AppCompatActivity {
                                 loc.latitude, loc.longitude);
                         desiredXOffSet = cos(360 - angle) * mockRadius;
                         desiredYOffSet = sin(360 - angle) * mockRadius * -1;
-//                        desiredX = centerX - desiredXOffSet - name_view.getWidth() / 2f;
-//                        desiredY = centerY - desiredYOffSet - name_view.getHeight()/ 2f;
+                        desiredX = centerX - desiredXOffSet - name_view.getWidth() / 2f;
+                        desiredY = centerY - desiredYOffSet - name_view.getHeight()/ 2f;
                         name_view.setText(loc.label);
 
                         ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(
@@ -348,16 +351,13 @@ public class MainActivity extends AppCompatActivity {
 
                         layoutParams.leftMargin = (int)(centerX - name_view.getWidth() / 2);
                         layoutParams.topMargin = (int)(centerY - name_view.getHeight() / 2);
-                        name_view.setX(layoutParams.leftMargin);
-                        name_view.setY(layoutParams.topMargin);
-//                        name_view.setX((float)centerX);
-//                        name_view.setY((float)centerY);
-                        System.out.println(layoutParams.topMargin);
+                        name_view.setX((float)desiredX);
+                        name_view.setY((float)desiredY);
+                        locationSet.add(name_view);
                         test_name_layout.addView(name_view);
                     }
                 }
             });
-
 
             for (var loc : locations) {
                 loc.observe(this, this::onLocationChanged);
@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onLocationChanged(Location location) {
-        Log.d("LOCCHANGED2", location.toString());
+        //Log.d("LOCCHANGED2", location.toString());
 
         // TODO: update icons
     }
