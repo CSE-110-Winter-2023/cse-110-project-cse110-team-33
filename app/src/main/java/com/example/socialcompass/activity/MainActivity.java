@@ -281,11 +281,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void removeAllIcons(){
         for (var name_view : locationSet){
-            System.out.println(locationSet.size());
             ViewGroup parent = (ViewGroup) name_view.getParent();
             parent.removeView(name_view);
-            //locationSet.remove(name_view);
-            System.out.println("Loop over");
         }
         locationSet.clear();
     }
@@ -359,9 +356,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            for (var loc : locations) {
-                loc.observe(this, this::onLocationChanged);
-            }
+//            for (var loc : locations) {
+//                loc.observe(this, this::onLocationChanged);
+//            }
         });
 
     }
