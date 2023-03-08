@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
     private String private_code;
     private String display_name;
 
+    private Map<String, TextView> labels;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         repo = new LocationRepository(locationDao, api);
 
         icons = new HashMap<>();
+        labels = new HashMap<>();
         locationSet = new HashSet<>();
 
         compassDisplay = findViewById(R.id.compassDisplay);
@@ -112,103 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getUID() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        public_code = preferences.getString("public_code", "null");
-        private_code = preferences.getString("private_code", "null");
-        display_name = preferences.getString("display_name", "null");
-
-        TextView displayName = findViewById(R.id.displayName);
-        TextView publicCode = findViewById(R.id.publicCode);
-        //System.out.println(publicCode.hashCode());
-        TextView privateCode = findViewById(R.id.privateCode);
-
-        displayName.setText(display_name);
-        publicCode.setText(public_code);
-        privateCode.setText(private_code);
-
-        Log.d("PUBLICCODE", public_code);
-    }
-
-    private void updateOrientation() {
-        TextView orientationDisplay = findViewById(R.id.orientationDisplay);
-
-        orientationService.getOrientation().observe(this, orientation -> {
-            orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159));
-            compassConstraintLayout.setRotation((float) - (orientation*180/3.14159));
-        });
-
-
-
-    }
-
-    private void checkLocationPermissions() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
-        }
-    }
-
-    private void updateLocation() {
-        TextView textview = (TextView) findViewById(R.id.locationDisplay);
-        locationService.getLocation().observe(this, loc ->{
-            textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
-//            displayIcons(loc);
-            // patch location on remote
-            repo.upsertRemote(public_code,
-                    private_code,
-                    loc.first,
-                    loc.second);
-
-        });
-    }
-
-
-    private void displayIcons(Pair<Double, Double> loc) {
-        for (Location location : locationList) {
-            if (!icons.containsKey(location)) {
-                ImageView imageView = new ImageView(this);
-                imageView.setId(View.generateViewId());
-                if (location.label.equals("blue")) {
-                    imageView.setImageResource(R.drawable.circle_blue);
-                } else if (location.label.equals("red")) {
-                    imageView.setImageResource(R.drawable.circle_red);
-                } else if (location.label.equals("yellow")) {
-                    imageView.setImageResource(R.drawable.circle_yellow);
-                } else if (location.label.equals("green")) {
-                    imageView.setImageResource(R.drawable.circle_green);
-                } else{
-                    imageView.setImageResource(R.drawable.circle_gray);
-                }
-
-                ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
-                imageView.setLayoutParams(newParams);
-                newParams.circleAngle = 0;
-                newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
-                newParams.circleConstraint = compassDisplay.getId();
-
-                icons.put(location, imageView);
-                compassConstraintLayout.addView(imageView);
-            }
-
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) icons.get(location).getLayoutParams();
-            double relative_angle = calculator.calculateBearing(loc.first, loc.second, location.longitude, location.latitude);
-            params.circleAngle = (float) relative_angle;
-            icons.get(location).setLayoutParams(params);
-
-        }
-    }
-
-    public Pair<LocationService, OrientationService> getServices() {
-        return new Pair<>(locationService, orientationService);
-    }
-
-    public void launchLocationListActivity(View view) {
-        Intent intent = new Intent(this, OldLocationListActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_LLA);
-
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -217,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         for (Map.Entry<Location, ImageView> entry : icons.entrySet()) {
             compassConstraintLayout.removeView(entry.getValue());
         }
+        labels.clear();
     }
 
     @Override
@@ -225,14 +132,14 @@ public class MainActivity extends AppCompatActivity {
         orientationService.registerSensorListeners();
         locationService.registerLocationListener();
 //        locationList = locationDao.getAll();
-//        icons.clear();
+        labels.clear();
         updateLocation();
         updateOrientation();
 
-        if (!locationSet.isEmpty()) {
-            removeAllIcons();
-        }
-        addAllIcons();
+//        if (!locationSet.isEmpty()) {
+//            removeAllIcons();
+//        }
+//        addAllIcons();
     }
 
     @Override
@@ -269,9 +176,103 @@ public class MainActivity extends AppCompatActivity {
         }
         locationList.clear();
 //        locationList = locationDao.getAll();
-        icons.clear();
+//        icons.clear();
+        labels.clear();
         updateLocation();
         updateOrientation();
+    }
+
+    private void getUID() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        public_code = preferences.getString("public_code", "null");
+        private_code = preferences.getString("private_code", "null");
+        display_name = preferences.getString("display_name", "null");
+
+        TextView displayName = findViewById(R.id.displayName);
+        TextView publicCode = findViewById(R.id.publicCode);
+        //System.out.println(publicCode.hashCode());
+        TextView privateCode = findViewById(R.id.privateCode);
+
+        displayName.setText(display_name);
+        publicCode.setText(public_code);
+        privateCode.setText(private_code);
+
+        Log.d("PUBLICCODE", public_code);
+    }
+
+    private void updateOrientation() {
+        TextView orientationDisplay = findViewById(R.id.orientationDisplay);
+
+        orientationService.getOrientation().observe(this, orientation -> {
+            orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159));
+            compassConstraintLayout.setRotation((float) - (orientation*180/3.14159));
+        });
+
+
+
+    }
+
+    private void updateLocation() {
+        TextView textview = (TextView) findViewById(R.id.locationDisplay);
+        locationService.getLocation().observe(this, loc ->{
+            textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
+            displayIcons(loc);
+            // patch location on remote
+            repo.upsertRemote(public_code,
+                    private_code,
+                    loc.first,
+                    loc.second);
+
+        });
+    }
+
+    private void checkLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
+        }
+    }
+
+
+    private void displayIcons(Pair<Double, Double> self_location) {
+
+        var locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
+
+        LiveData<List<Location>> fromLocal = repo.getAllLocal();
+
+        fromLocal.observe(this, listEntity -> {
+            fromLocal.removeObservers(this);
+
+            var liveLocations = locationVM.getLocationsLive(listEntity);
+
+            for (var liveLocation : liveLocations) {
+                liveLocation.observe(this, location -> {
+                    if (!labels.containsKey(location.label)) {
+                        TextView textView = new TextView(this);
+                        textView.setId(View.generateViewId());
+                        textView.setText(location.label);
+
+                        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
+                        textView.setLayoutParams(newParams);
+                        newParams.circleAngle = 0;
+                        newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
+                        newParams.circleConstraint = compassDisplay.getId();
+
+                        compassConstraintLayout.addView(textView);
+                        labels.put(location.label, textView);
+                    }
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) labels.get(location.label).getLayoutParams();
+                    double relative_angle = calculator.calculateBearing(self_location.first, self_location.second, location.longitude, location.latitude);
+                    params.circleAngle = (float) relative_angle;
+                    labels.get(location.label).setLayoutParams(params);
+                });
+            }
+
+        });
+    }
+
+    public Pair<LocationService, OrientationService> getServices() {
+        return new Pair<>(locationService, orientationService);
     }
 
     public void launchFriendListActivity(View view) {
