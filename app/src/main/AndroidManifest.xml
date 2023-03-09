@@ -18,9 +18,6 @@
             android:name=".activity.FirstLaunchActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.DataEntryPage"
-            android:exported="false" />
-        <activity
             android:name=".activity.LocationListActivity"
             android:exported="false">
             <meta-data
