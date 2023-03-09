@@ -39,7 +39,7 @@ public class LocationRepository {
             if (theirLoc == null) return; // do nothing
             if (ourLoc == null || ourLoc.updated_at < theirLoc.updated_at) {
                 upsertLocal(theirLoc);
-                Log.d("LOCCHANGED", theirLoc.toString());
+//                Log.d("LOCCHANGED", theirLoc.toString());
             }
         };
 
