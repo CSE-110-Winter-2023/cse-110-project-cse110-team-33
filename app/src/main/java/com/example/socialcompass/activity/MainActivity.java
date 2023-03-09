@@ -62,10 +62,6 @@ public class MainActivity extends AppCompatActivity {
     private static int REQUEST_CODE_DEP = 24;
     private static int REQUEST_CODE_LLA = 25;
     private static int REQUEST_CODE_FLA = 27;
-
-    private List<Location> locationList;
-    private Map<Location, ImageView> icons;
-    private Set<TextView> locationSet;
     private LocationDao locationDao;
 
     private LocationViewModel locationVM;
@@ -78,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private String display_name;
 
     private Map<String, TextView> labels;
+    private List<Location> locationList;
 
 
     @Override
@@ -95,9 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
 
-        icons = new HashMap<>();
         labels = new HashMap<>();
-        locationSet = new HashSet<>();
 
         compassDisplay = findViewById(R.id.compassDisplay);
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
@@ -184,9 +179,6 @@ public class MainActivity extends AppCompatActivity {
             orientationService.registerSensorListeners();
             locationService.registerLocationListener();
         }
-        locationList.clear();
-//        locationList = locationDao.getAll();
-//        icons.clear();
         labels.clear();
         updateLocation();
         updateOrientation();
@@ -260,12 +252,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayIcons(Pair<Double, Double> self_location) {
 
-//        LiveData<List<Location>> fromLocal = repo.getAllLocal();
-//
-//        fromLocal.observe(this, listEntity -> {
-//            // listEntity is list of local friends, should only be run once
-//            fromLocal.removeObservers(this);
-//            Log.d("LABELS", listEntity.toString());
 
             var liveLocations = locationVM.getLocationsLive(this.locationList);
 
@@ -292,7 +278,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-//        });
     }
 
     public Pair<LocationService, OrientationService> getServices() {
@@ -302,98 +287,6 @@ public class MainActivity extends AppCompatActivity {
     public void launchFriendListActivity(View view) {
         Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
-    }
-
-    public void removeAllIcons(){
-        for (var name_view : locationSet){
-            ViewGroup parent = (ViewGroup) name_view.getParent();
-            parent.removeView(name_view);
-        }
-        locationSet.clear();
-    }
-
-
-
-
-    public void addAllIcons() {
-
-        var locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
-
-        LiveData<List<Location>> fromLocal = repo.getAllLocal();
-        fromLocal.observe(this, listEntity -> {
-            fromLocal.removeObservers(this);
-
-            Log.d("LOCALLIST", listEntity.toString());
-            // TODO: create icons (map location to icon
-
-
-            LiveData<Location> self_location;
-
-            var locations = locationVM.getLocationsLive(listEntity);
-            try {
-                self_location = getSelfLocation();
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            //update icons
-            Context c = this;
-            ConstraintLayout test_name_layout = findViewById(R.id.test_name);
-            test_name_layout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-                @Override
-                public void onGlobalLayout() {
-                    test_name_layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                    float centerX = 0;
-                    float centerY = 0;
-
-                    centerX = test_name_layout.getWidth() / 2f;
-                    centerY = test_name_layout.getHeight() / 2f;
-                    double angle;
-                    double mockRadius = 300.0;
-                    double desiredX;
-                    double desiredY;
-                    double desiredXOffSet;
-                    double desiredYOffSet;
-
-                    for (var loc : listEntity) {
-                        TextView name_view = new TextView(c);
-                        angle = calculator.calculateBearing(self_location.getValue().latitude,
-                                self_location.getValue().longitude,
-                                loc.latitude, loc.longitude);
-                        desiredXOffSet = cos(360 - angle) * mockRadius;
-                        desiredYOffSet = sin(360 - angle) * mockRadius * -1;
-                        desiredX = centerX - desiredXOffSet - name_view.getWidth() / 2f;
-                        desiredY = centerY - desiredYOffSet - name_view.getHeight()/ 2f;
-                        name_view.setText(loc.label);
-
-                        ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(
-                                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                                ConstraintLayout.LayoutParams.WRAP_CONTENT
-                        );
-
-                        layoutParams.leftMargin = (int)(centerX - name_view.getWidth() / 2);
-                        layoutParams.topMargin = (int)(centerY - name_view.getHeight() / 2);
-                        name_view.setX((float)desiredX);
-                        name_view.setY((float)desiredY);
-                        locationSet.add(name_view);
-                        test_name_layout.addView(name_view);
-                    }
-                }
-            });
-
-//            for (var loc : locations) {
-//                loc.observe(this, this::onLocationChanged);
-//            }
-        });
-
-    }
-
-    public LiveData<Location> getSelfLocation() throws ExecutionException, InterruptedException {
-        return repo.getRemote(this.public_code);
     }
 
     private void onLocationChanged(Location location) {
