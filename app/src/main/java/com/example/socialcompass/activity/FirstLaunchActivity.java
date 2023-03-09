@@ -58,7 +58,8 @@ public class FirstLaunchActivity extends AppCompatActivity {
             return;
         }
 
-        String private_code = UUID.randomUUID().toString();
+//        String private_code = UUID.randomUUID().toString();
+        String private_code = "0123456789"; // for easier testing
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = preferences.edit();

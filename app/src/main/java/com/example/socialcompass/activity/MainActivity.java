@@ -40,6 +40,7 @@ import com.example.socialcompass.R;
 import com.example.socialcompass.viewmodel.LocationViewModel;
 
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
     private Set<TextView> locationSet;
     private LocationDao locationDao;
 
+    private LocationViewModel locationVM;
+
     private LocationRepository repo;
     private LocationAPI api;
 
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         api = LocationAPI.provide();
         repo = new LocationRepository(locationDao, api);
 
+        locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
+
         icons = new HashMap<>();
         labels = new HashMap<>();
         locationSet = new HashSet<>();
@@ -100,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
         checkLocationPermissions();
 
         locationService = LocationService.singleton(this);
-        updateLocation();
+//        updateLocation();
 
         orientationService = new OrientationService(this);
-        updateOrientation();
+//        updateOrientation();
 
         getUID();
 
@@ -120,10 +125,9 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         orientationService.unregisterSensorListeners();
         locationService.unregisterLocationListener();
-        for (Map.Entry<Location, ImageView> entry : icons.entrySet()) {
+        for (Map.Entry<String, TextView> entry : labels.entrySet()) {
             compassConstraintLayout.removeView(entry.getValue());
         }
-        labels.clear();
     }
 
     @Override
@@ -132,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
         orientationService.registerSensorListeners();
         locationService.registerLocationListener();
 //        locationList = locationDao.getAll();
-        labels.clear();
+//        labels.clear();
+
         updateLocation();
         updateOrientation();
 
@@ -236,12 +241,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayIcons(Pair<Double, Double> self_location) {
 
-        var locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
-
         LiveData<List<Location>> fromLocal = repo.getAllLocal();
 
         fromLocal.observe(this, listEntity -> {
+            // listEntity is list of local friends, should only be run once
             fromLocal.removeObservers(this);
+            Log.d("LABELS", listEntity.toString());
 
             var liveLocations = locationVM.getLocationsLive(listEntity);
 
@@ -287,6 +292,10 @@ public class MainActivity extends AppCompatActivity {
         }
         locationSet.clear();
     }
+
+
+
+
     public void addAllIcons() {
 
         var locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
@@ -369,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onLocationChanged(Location location) {
-        //Log.d("LOCCHANGED2", location.toString());
+        Log.d("LOCCHANGED2", location.toString());
 
         // TODO: update icons
     }
