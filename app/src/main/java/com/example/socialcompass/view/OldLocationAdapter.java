@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHolder> {
+public class OldLocationAdapter extends RecyclerView.Adapter<OldLocationAdapter.ViewHolder> {
 
     private List<Location> locationList = Collections.emptyList();
     private Consumer<Location> onDeleteBtnClicked;
@@ -60,7 +60,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
 
     @NonNull
     @Override
-    public LocationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public OldLocationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.location, parent, false);
@@ -68,7 +68,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LocationAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull OldLocationAdapter.ViewHolder holder, int position) {
         holder.setLocation(locationList.get(position));
     }
 
@@ -106,7 +106,7 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.ViewHo
             });
             this.locLat = itemView.findViewById(R.id.locLat);
             this.locLong = itemView.findViewById(R.id.locLong);
-            this.removeBtn = itemView.findViewById(R.id.addBtn);
+            this.removeBtn = itemView.findViewById(R.id.deleteBtn);
 
             this.removeBtn.setOnClickListener(view -> {
                 if(onDeleteBtnClicked == null) return;

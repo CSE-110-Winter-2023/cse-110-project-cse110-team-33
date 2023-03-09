@@ -2,33 +2,34 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/test_name"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/displayName"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="NAME"/>
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="NAME"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/publicCode"
-        app:layout_constraintTop_toBottomOf="@id/displayName"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="public code"/>
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/privateCode"
-        app:layout_constraintTop_toBottomOf="@id/publicCode"
+        android:text="public code"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="private code"/>
+        app:layout_constraintTop_toBottomOf="@id/displayName" />
+
+    <TextView
+        android:id="@+id/privateCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="private code"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/publicCode" />
 
     <TextView
         android:id="@+id/orientationDisplay"
@@ -39,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1"/>
+        app:layout_constraintVertical_bias="0.1" />
 
     <TextView
         android:id="@+id/locationDisplay"
@@ -50,24 +51,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.2"/>
+        app:layout_constraintVertical_bias="0.2" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/compassConstraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="130dp">
 
         <ImageView
             android:id="@+id/compassDisplay"
             android:layout_width="172dp"
             android:layout_height="291dp"
-            app:srcCompat="@drawable/compass"
-            tools:layout_editor_absoluteX="120dp"
-            tools:layout_editor_absoluteY="176dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/compass"
+            tools:layout_editor_absoluteX="120dp"
+            tools:layout_editor_absoluteY="176dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -75,37 +78,50 @@
         android:id="@+id/needleDisplay"
         android:layout_width="48dp"
         android:layout_height="68dp"
-        app:srcCompat="@drawable/needle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3"/>
+        app:layout_constraintVertical_bias="0.3"
+        app:srcCompat="@drawable/needle" />
 
     <Button
         android:id="@+id/locationManagerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/button"
         android:onClick="launchLocationListActivity"
         android:text="Location Manager"
+        app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8" />
+
+    <Button
+        android:id="@+id/friendManagerBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:background="@drawable/button"
+        android:onClick="launchFriendListActivity"
+        android:text="Friend manager"
         app:backgroundTint="@null"
-        app:layout_constraintVertical_bias="0.8"/>
-        
-<!--    <Button-->
-<!--        android:id="@+id/dataEntryPage"-->
-<!--        android:layout_width="200dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:onClick="onGoToDataEntryPage"-->
-<!--        android:text="Location Entry"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.98" />-->
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationManagerButton" />
+
+    <!--    <Button-->
+    <!--        android:id="@+id/dataEntryPage"-->
+    <!--        android:layout_width="200dp"-->
+    <!--        android:layout_height="100dp"-->
+    <!--        android:onClick="onGoToDataEntryPage"-->
+    <!--        android:text="Location Entry"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintVertical_bias="0.98" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

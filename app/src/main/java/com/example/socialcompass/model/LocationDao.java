@@ -20,11 +20,15 @@ public interface LocationDao {
     @Query("SELECT EXISTS(SELECT 1 FROM locations WHERE public_code = :public_code)")
     public abstract boolean exists(String public_code);
 
-    @Query("SELECT * FROM `locations` WHERE `public_code`=:public_code")
+    @Query("SELECT * FROM locations WHERE `public_code`=:public_code")
     public abstract LiveData<Location> get(String public_code);
 
-    @Query("SELECT * FROM `locations` ORDER BY public_code")
+    @Query("SELECT * FROM locations ORDER BY public_code")
     public abstract LiveData<List<Location>> getAll();
+
+
+    // ============
+    // old methods
 
     @Insert
     long insert(Location location);

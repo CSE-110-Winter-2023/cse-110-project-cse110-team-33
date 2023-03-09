@@ -1,5 +1,8 @@
 package com.example.socialcompass.model;
 
+import android.util.Log;
+import android.util.Pair;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -29,23 +32,24 @@ public class LocationRepository {
     // ==============
 
     public LiveData<Location> getSynced(String public_code) throws ExecutionException, InterruptedException {
-//        var loc = new MediatorLiveData<Location>();
-//
-//        Observer<Location> updateFromRemote = theirLoc -> {
-//            var ourLoc = loc.getValue();
-//            if (theirLoc == null) return; // do nothing
-//            if (ourLoc == null || ourLoc.updated_at < theirLoc.updated_at) {
-//                upsertLocal(theirLoc);
-//            }
-//        };
-//
-//        // If we get a local update, pass it on.
-//        loc.addSource(getLocal(public_code), loc::postValue);
-//        // If we get a remote update, update the local version (triggering the above observer)
-//        loc.addSource(getRemote(public_code), updateFromRemote);
-//
-//        return loc;
-        return null;
+        var loc = new MediatorLiveData<Location>();
+
+        Observer<Location> updateFromRemote = theirLoc -> {
+            var ourLoc = loc.getValue();
+            if (theirLoc == null) return; // do nothing
+            if (ourLoc == null || ourLoc.updated_at < theirLoc.updated_at) {
+                upsertLocal(theirLoc);
+//                Log.d("LOCCHANGED", theirLoc.toString());
+            }
+        };
+
+        // If we get a local update, pass it on.
+        loc.addSource(getLocal(public_code), loc::postValue);
+        // If we get a remote update, update the local version (triggering the above observer)
+        loc.addSource(getRemote(public_code), updateFromRemote);
+
+        return loc;
+//        return null;
     }
 
     public void upsertSynced(Location loc) {
@@ -80,6 +84,34 @@ public class LocationRepository {
 
     // Remote Methods
     // ==============
+
+    public LiveData<Location> getRemote(String public_code) throws ExecutionException, InterruptedException {
+        Location initialLoc = api.getAsync(public_code).get();
+        if (initialLoc.public_code == null) return null;
+
+        var location = new MutableLiveData<Location>();
+        location.setValue(initialLoc);
+
+        var executor = Executors.newSingleThreadScheduledExecutor();
+        ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(() -> {
+            Future<Location> future = api.getAsync(public_code);
+            try {
+                location.postValue(future.get(1, TimeUnit.SECONDS));
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+        }, 0, 3, TimeUnit.SECONDS);
+
+        return location;
+    }
+
+    public void upsertRemote(String public_code, String private_code, Double latitude, Double longitude) {
+        api.patchAsync(public_code, private_code, latitude, longitude);
+    }
 
 }
 

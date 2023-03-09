@@ -1,23 +1,35 @@
 package com.example.socialcompass.activity;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
 
 
+import com.example.socialcompass.model.LocationAPI;
+import com.example.socialcompass.model.LocationRepository;
 import com.example.socialcompass.utility.AngleCalculation;
 import com.example.socialcompass.model.Location;
 import com.example.socialcompass.model.LocationDao;
@@ -25,12 +37,16 @@ import com.example.socialcompass.model.LocationDatabase;
 import com.example.socialcompass.utility.LocationService;
 import com.example.socialcompass.utility.OrientationService;
 import com.example.socialcompass.R;
+import com.example.socialcompass.viewmodel.LocationViewModel;
 
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -45,14 +61,20 @@ public class MainActivity extends AppCompatActivity {
 
     private static int REQUEST_CODE_DEP = 24;
     private static int REQUEST_CODE_LLA = 25;
-
-    private List<Location> locationList;
-    private Map<Location, ImageView> icons;
+    private static int REQUEST_CODE_FLA = 27;
     private LocationDao locationDao;
+
+    private LocationViewModel locationVM;
+
+    private LocationRepository repo;
+    private LocationAPI api;
 
     private String public_code;
     private String private_code;
     private String display_name;
+
+    private Map<String, TextView> labels;
+    private List<Location> locationList;
 
 
     @Override
@@ -65,7 +87,12 @@ public class MainActivity extends AppCompatActivity {
         locationDao = db.locationDao();
 //        locationList = locationDao.getAll();
 
-        icons = new HashMap<>();
+        api = LocationAPI.provide();
+        repo = new LocationRepository(locationDao, api);
+
+        locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
+
+        labels = new HashMap<>();
 
         compassDisplay = findViewById(R.id.compassDisplay);
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
@@ -73,23 +100,12 @@ public class MainActivity extends AppCompatActivity {
         checkLocationPermissions();
 
         locationService = LocationService.singleton(this);
-        updateLocation();
+//        updateLocation();
 
         orientationService = new OrientationService(this);
-        updateOrientation();
+//        updateOrientation();
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        public_code = preferences.getString("public_code", "null");
-        private_code = preferences.getString("private_code", "null");
-        display_name = preferences.getString("display_name", "null");
-
-        TextView displayName = findViewById(R.id.displayName);
-        TextView publicCode = findViewById(R.id.publicCode);
-        TextView privateCode = findViewById(R.id.privateCode);
-
-        displayName.setText(display_name);
-        publicCode.setText(public_code);
-        privateCode.setText(private_code);
+        getUID();
 
         if (public_code.equals("null")) {
             Intent intent = new Intent(this, FirstLaunchActivity.class);
@@ -99,132 +115,44 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getUID() {
-        // if UID doesn't exist, start firstlaunchactivity
-    }
-
-    private void updateOrientation() {
-        TextView orientationDisplay = findViewById(R.id.orientationDisplay);
-
-        orientationService.getOrientation().observe(this, orientation -> {
-            orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159));
-            compassConstraintLayout.setRotation((float) - (orientation*180/3.14159));
-        });
-    }
-
-    private void checkLocationPermissions() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
-        }
-    }
-
-    private void updateLocation() {
-        TextView textview = (TextView) findViewById(R.id.locationDisplay);
-        locationService.getLocation().observe(this, loc ->{
-            textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
-//            displayIcons(loc);
-
-        });
-    }
-
-
-    private void displayIcons(Pair<Double, Double> loc) {
-        for (Location location : locationList) {
-            if (!icons.containsKey(location)) {
-                ImageView imageView = new ImageView(this);
-                imageView.setId(View.generateViewId());
-                if (location.label.equals("blue")) {
-                    imageView.setImageResource(R.drawable.circle_blue);
-                } else if (location.label.equals("red")) {
-                    imageView.setImageResource(R.drawable.circle_red);
-                } else if (location.label.equals("yellow")) {
-                    imageView.setImageResource(R.drawable.circle_yellow);
-                } else if (location.label.equals("green")) {
-                    imageView.setImageResource(R.drawable.circle_green);
-                } else{
-                    imageView.setImageResource(R.drawable.circle_gray);
-                }
-
-                ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
-                imageView.setLayoutParams(newParams);
-                newParams.circleAngle = 0;
-                newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
-                newParams.circleConstraint = compassDisplay.getId();
-
-                icons.put(location, imageView);
-                compassConstraintLayout.addView(imageView);
-            }
-
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) icons.get(location).getLayoutParams();
-            double relative_angle = calculator.calculateBearing(loc.first, loc.second, location.longitude, location.latitude);
-            params.circleAngle = (float) relative_angle;
-            icons.get(location).setLayoutParams(params);
-
-        }
-    }
-
-    public Pair<LocationService, OrientationService> getServices() {
-        return new Pair<>(locationService, orientationService);
-    }
-
-    public void launchLocationListActivity(View view) {
-        Intent intent = new Intent(this, LocationListActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_LLA);
-
-    }
-
-//    public void onGoToDataEntryPage(View view) {
-//        Intent intent = new Intent(this, DataEntryPage.class);
-//        startActivityForResult(intent, REQUEST_CODE_DEP);
-//    }
-
-
     @Override
     protected void onPause() {
         super.onPause();
         orientationService.unregisterSensorListeners();
         locationService.unregisterLocationListener();
-        for (Map.Entry<Location, ImageView> entry : icons.entrySet()) {
+        for (Map.Entry<String, TextView> entry : labels.entrySet()) {
             compassConstraintLayout.removeView(entry.getValue());
         }
+        labels.clear();
+
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        orientationService.registerSensorListeners();
-//        locationService.registerLocationListener();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUID();
+        orientationService.registerSensorListeners();
+        locationService.registerLocationListener();
+
+        getFriendsToTrack();
 //        locationList = locationDao.getAll();
-//        icons.clear();
-//        updateLocation();
-//        updateOrientation();
-//    }
+//        labels.clear();
+
+        updateLocation();
+        updateOrientation();
+
+//        if (!locationSet.isEmpty()) {
+//            removeAllIcons();
+//        }
+//        addAllIcons();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CODE_DEP) {
-//            int orientation = data.getIntExtra("orientation", -1);
-//            Log.d("MAIN", String.valueOf(orientation));
-//            if (orientation != -1) {
-//                MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
-//                mockOrientation.setValue((float) (((-orientation*Math.PI)/180) % Math.PI));
-//                orientationService.setMockOrientationService(mockOrientation);
-//            }
-//            icons.clear();
-//            updateLocation();
-//            updateOrientation();
-//        }
-//        else if (requestCode == REQUEST_CODE_LLA){
-//            //super.onResume();
-//            orientationService.registerSensorListeners();
-//            locationService.registerLocationListener();
-//            locationList = locationDao.getAll();
-//            icons.clear();
-//            updateLocation();
-//            updateOrientation();
-//        }
+        if (requestCode == REQUEST_CODE_FLA) {
+            getUID();
+        }
         if (requestCode != REQUEST_CODE_LLA) return;
 
         if (data != null) {
@@ -251,11 +179,120 @@ public class MainActivity extends AppCompatActivity {
             orientationService.registerSensorListeners();
             locationService.registerLocationListener();
         }
-        locationList.clear();
-//        locationList = locationDao.getAll();
-        icons.clear();
+        labels.clear();
         updateLocation();
         updateOrientation();
+    }
+
+    private void getUID() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        public_code = preferences.getString("public_code", "null");
+        private_code = preferences.getString("private_code", "null");
+        display_name = preferences.getString("display_name", "null");
+
+        TextView displayName = findViewById(R.id.displayName);
+        TextView publicCode = findViewById(R.id.publicCode);
+        //System.out.println(publicCode.hashCode());
+        TextView privateCode = findViewById(R.id.privateCode);
+
+        displayName.setText(display_name);
+        publicCode.setText(public_code);
+        privateCode.setText(private_code);
+
+        Log.d("PUBLICCODE", public_code);
+    }
+
+    private void updateOrientation() {
+        TextView orientationDisplay = findViewById(R.id.orientationDisplay);
+
+        orientationService.getOrientation().observe(this, orientation -> {
+            orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159));
+            compassConstraintLayout.setRotation((float) - (orientation*180/3.14159));
+        });
+
+
+
+    }
+
+    private void updateLocation() {
+        TextView textview = (TextView) findViewById(R.id.locationDisplay);
+        locationService.getLocation().observe(this, loc ->{
+            textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
+            displayIcons(loc);
+            // patch location on remote
+            repo.upsertRemote(public_code,
+                    private_code,
+                    loc.first,
+                    loc.second);
+
+        });
+    }
+
+    private void checkLocationPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 200);
+        }
+    }
+
+    private void getFriendsToTrack() {
+        if (this.locationList == null) {
+            locationList = Collections.emptyList();
+        } else {
+            this.locationList.clear();
+        }
+
+        var fromLocal = repo.getAllLocal();
+        fromLocal.observe(this, listEntity-> {
+            fromLocal.removeObservers(this);
+            this.locationList = listEntity;
+        });
+    }
+
+
+    private void displayIcons(Pair<Double, Double> self_location) {
+
+
+            var liveLocations = locationVM.getLocationsLive(this.locationList);
+
+            for (var liveLocation : liveLocations) {
+                liveLocation.observe(this, location -> {
+                    if (!labels.containsKey(location.label)) {
+                        TextView textView = new TextView(this);
+                        textView.setId(View.generateViewId());
+                        textView.setText(location.label);
+
+                        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
+                        textView.setLayoutParams(newParams);
+                        newParams.circleAngle = 0;
+                        newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
+                        newParams.circleConstraint = compassDisplay.getId();
+
+                        compassConstraintLayout.addView(textView);
+                        labels.put(location.label, textView);
+                    }
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) labels.get(location.label).getLayoutParams();
+                    double relative_angle = calculator.calculateBearing(self_location.first, self_location.second, location.longitude, location.latitude);
+                    params.circleAngle = (float) relative_angle;
+                    labels.get(location.label).setLayoutParams(params);
+                });
+            }
+
+    }
+
+    public Pair<LocationService, OrientationService> getServices() {
+        return new Pair<>(locationService, orientationService);
+    }
+
+    public void launchFriendListActivity(View view) {
+        Intent intent = new Intent(this, FriendListActivity.class);
+        startActivity(intent);
+    }
+
+    private void onLocationChanged(Location location) {
+        Log.d("LOCCHANGED2", location.toString());
+
+        // TODO: update icons
     }
 
 }
