@@ -71,5 +71,4 @@ public class FriendListActivity extends AppCompatActivity {
             UIDInput.getText().clear();
         });
     }
-
 }

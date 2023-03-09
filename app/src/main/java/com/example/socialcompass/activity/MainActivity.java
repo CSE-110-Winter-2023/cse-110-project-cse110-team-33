@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (public_code.equals("null")) {
             Intent intent = new Intent(this, FirstLaunchActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_FLA);
+            startActivity(intent);
         }
 
 
@@ -128,13 +128,18 @@ public class MainActivity extends AppCompatActivity {
         for (Map.Entry<String, TextView> entry : labels.entrySet()) {
             compassConstraintLayout.removeView(entry.getValue());
         }
+        labels.clear();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        getUID();
         orientationService.registerSensorListeners();
         locationService.registerLocationListener();
+
+        getFriendsToTrack();
 //        locationList = locationDao.getAll();
 //        labels.clear();
 
@@ -238,17 +243,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void getFriendsToTrack() {
+        if (this.locationList == null) {
+            locationList = Collections.emptyList();
+        } else {
+            this.locationList.clear();
+        }
+
+        var fromLocal = repo.getAllLocal();
+        fromLocal.observe(this, listEntity-> {
+            fromLocal.removeObservers(this);
+            this.locationList = listEntity;
+        });
+    }
+
 
     private void displayIcons(Pair<Double, Double> self_location) {
 
-        LiveData<List<Location>> fromLocal = repo.getAllLocal();
+//        LiveData<List<Location>> fromLocal = repo.getAllLocal();
+//
+//        fromLocal.observe(this, listEntity -> {
+//            // listEntity is list of local friends, should only be run once
+//            fromLocal.removeObservers(this);
+//            Log.d("LABELS", listEntity.toString());
 
-        fromLocal.observe(this, listEntity -> {
-            // listEntity is list of local friends, should only be run once
-            fromLocal.removeObservers(this);
-            Log.d("LABELS", listEntity.toString());
-
-            var liveLocations = locationVM.getLocationsLive(listEntity);
+            var liveLocations = locationVM.getLocationsLive(this.locationList);
 
             for (var liveLocation : liveLocations) {
                 liveLocation.observe(this, location -> {
@@ -273,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-        });
+//        });
     }
 
     public Pair<LocationService, OrientationService> getServices() {
