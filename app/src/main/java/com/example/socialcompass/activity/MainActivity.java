@@ -34,6 +34,7 @@ import com.example.socialcompass.utility.AngleCalculation;
 import com.example.socialcompass.model.Location;
 import com.example.socialcompass.model.LocationDao;
 import com.example.socialcompass.model.LocationDatabase;
+import com.example.socialcompass.utility.DisplayBuilder;
 import com.example.socialcompass.utility.LocationService;
 import com.example.socialcompass.utility.OrientationService;
 import com.example.socialcompass.R;
@@ -74,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
     private String display_name;
 
     private Map<String, TextView> labels;
-    private List<Location> locationList;
+    private List<LiveData<Location>> locationList;
+
+    private DisplayBuilder displayBuilder;
 
 
     @Override
@@ -82,13 +85,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        LocationDatabase db = LocationDatabase.getSingleton(this);
-        locationDao = db.locationDao();
-//        locationList = locationDao.getAll();
-
-        api = LocationAPI.provide();
-        repo = new LocationRepository(locationDao, api);
+        setUp();
 
         locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
 
@@ -97,13 +94,22 @@ public class MainActivity extends AppCompatActivity {
         compassDisplay = findViewById(R.id.compassDisplay);
         compassConstraintLayout = findViewById(R.id.compassConstraintLayout);
 
-        checkLocationPermissions();
+        displayBuilder = new DisplayBuilder(this);
 
-        locationService = LocationService.singleton(this);
-//        updateLocation();
+        // creating radar view with a builder
+        ConstraintLayout child = displayBuilder.getConstraintLayout();
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) child.getLayoutParams();
+        compassConstraintLayout.addView(child);
 
-        orientationService = new OrientationService(this);
-//        updateOrientation();
+        params.height = 900;
+        params.width = 900;
+        params.topToTop = compassConstraintLayout.getId();
+        params.bottomToBottom = compassConstraintLayout.getId();
+        params.startToStart = compassConstraintLayout.getId();
+        params.endToEnd = compassConstraintLayout.getId();
+
+
+
 
         getUID();
 
@@ -115,6 +121,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setUp() {
+        LocationDatabase db = LocationDatabase.getSingleton(this);
+        locationDao = db.locationDao();
+        api = LocationAPI.provide();
+        repo = new LocationRepository(locationDao, api);
+        checkLocationPermissions();
+        locationService = LocationService.singleton(this);
+        orientationService = new OrientationService(this);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -124,7 +140,10 @@ public class MainActivity extends AppCompatActivity {
             compassConstraintLayout.removeView(entry.getValue());
         }
         labels.clear();
-
+        for (var liveLoc : this.locationList) {
+            liveLoc.removeObservers(this);
+        }
+        locationList.clear();
     }
 
     @Override
@@ -135,16 +154,9 @@ public class MainActivity extends AppCompatActivity {
         locationService.registerLocationListener();
 
         getFriendsToTrack();
-//        locationList = locationDao.getAll();
-//        labels.clear();
 
         updateLocation();
         updateOrientation();
-
-//        if (!locationSet.isEmpty()) {
-//            removeAllIcons();
-//        }
-//        addAllIcons();
     }
 
     @Override
@@ -157,18 +169,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (data != null) {
             int orientation = data.getIntExtra("orientation", -1);
-//            Log.d("MAIN", String.valueOf(orientation));
             if (orientation != -1) {
                 MutableLiveData<Float> mockOrientation = new MutableLiveData<>();
                 mockOrientation.setValue((float) (((orientation*Math.PI)/180)));
                 orientationService.setMockOrientationService(mockOrientation);
-//                var orientation = orientationService.getOrientation().getValue();
-//                TextView orientationDisplay = findViewById(R.id.orientationDisplay);
-//                orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159) + mock_val);
-//                compassConstraintLayout.setRotation((float) - (orientation*180/3.14159 + mock_val));
-
-
-//                mockOrientation.setValue((float) ((Math.abs(orientation))));
 
             } else {
                 orientationService.registerSensorListeners();
@@ -192,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
         TextView displayName = findViewById(R.id.displayName);
         TextView publicCode = findViewById(R.id.publicCode);
-        //System.out.println(publicCode.hashCode());
         TextView privateCode = findViewById(R.id.privateCode);
 
         displayName.setText(display_name);
@@ -209,9 +212,6 @@ public class MainActivity extends AppCompatActivity {
             orientationDisplay.setText(String.format("%.2f", orientation*180/3.14159));
             compassConstraintLayout.setRotation((float) - (orientation*180/3.14159));
         });
-
-
-
     }
 
     private void updateLocation() {
@@ -245,17 +245,17 @@ public class MainActivity extends AppCompatActivity {
         var fromLocal = repo.getAllLocal();
         fromLocal.observe(this, listEntity-> {
             fromLocal.removeObservers(this);
-            this.locationList = listEntity;
+            Log.d("UIDSTOTRACK", listEntity.toString());
+            this.locationList = locationVM.getLocationsLive(listEntity);
         });
     }
 
 
     private void displayIcons(Pair<Double, Double> self_location) {
+            // should move to display builder
 
 
-            var liveLocations = locationVM.getLocationsLive(this.locationList);
-
-            for (var liveLocation : liveLocations) {
+            for (var liveLocation : this.locationList) {
                 liveLocation.observe(this, location -> {
                     if (!labels.containsKey(location.label)) {
                         TextView textView = new TextView(this);
@@ -265,6 +265,8 @@ public class MainActivity extends AppCompatActivity {
                         ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
                         textView.setLayoutParams(newParams);
                         newParams.circleAngle = 0;
+
+                        // TODO: set radius with DistanceCalculator
                         newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
                         newParams.circleConstraint = compassDisplay.getId();
 
@@ -289,10 +291,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void onLocationChanged(Location location) {
-        Log.d("LOCCHANGED2", location.toString());
-
-        // TODO: update icons
+    public void zoomIn(View view) {
+        displayBuilder.zoomIn();
     }
 
+    public void zoomOut(View view) {
+        displayBuilder.zoomOut();
+    }
 }
