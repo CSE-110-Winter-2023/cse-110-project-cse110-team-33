@@ -55,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     private OrientationService orientationService;
     private LocationService locationService;
-    private AngleCalculation calculator;
-    private DistanceCalculation distanceCalculator;
+
 
     private ImageView compassDisplay;
     private ConstraintLayout compassConstraintLayout;
@@ -71,12 +70,14 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationRepository repo;
     private LocationAPI api;
+    private Map<String, TextView> labels;
 
+    private AngleCalculation calculator;
+    private DistanceCalculation distanceCalculator;
     private String public_code;
     private String private_code;
     private String display_name;
 
-    private Map<String, TextView> labels;
     private List<LiveData<Location>> locationList;
 
     private DisplayBuilder displayBuilder;
@@ -216,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textview = (TextView) findViewById(R.id.locationDisplay);
         locationService.getLocation().observe(this, loc ->{
             textview.setText(Double.toString(loc.first) + " , " + Double.toString(loc.second));
-            displayIcons(loc);
+            displayIcon(loc);
             // patch location on remote
             repo.upsertRemote(public_code,
                     private_code,
@@ -248,41 +249,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    private void displayIcons(Pair<Double, Double> self_location) {
-            // should move to display builder
-            for (var liveLocation : this.locationList) {
-                liveLocation.observe(this, location -> {
-                    double distance = distanceCalculator.CalculateDistance(self_location.first,
-                            self_location.second, location.longitude, location.latitude);
-
-                    if (!labels.containsKey(location.label)) {
-                        TextView textView = new TextView(this);
-                        textView.setId(View.generateViewId());
-                        textView.setText(location.label);
-
-                        ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
-                        textView.setLayoutParams(newParams);
-                        newParams.circleAngle = 0;
-
-                        // TODO: set radius with DistanceCalculator
-
-
-                        newParams.circleRadius = (int) distance / 100;
-                        newParams.circleConstraint = compassDisplay.getId();
-
-                        compassConstraintLayout.addView(textView);
-                        labels.put(location.label, textView);
-                    }
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)
-                            labels.get(location.label).getLayoutParams();
-                    double relative_angle = calculator.calculateBearing(self_location.first,
-                            self_location.second, location.longitude, location.latitude);
-                    params.circleAngle = (float) relative_angle;
-                    labels.get(location.label).setLayoutParams(params);
-                });
-            }
-
+    public void displayIcon(Pair<Double, Double> self_location){
+        for (var liveLocation : this.locationList) {
+            liveLocation.observe(this, location -> {
+                displayBuilder.setLiveLocations(self_location,location,labels,compassDisplay,compassConstraintLayout);
+            });
+        }
     }
 
     public Pair<LocationService, OrientationService> getServices() {
@@ -296,9 +268,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void zoomIn(View view) {
         displayBuilder.zoomIn();
+//        int level = displayBuilder.currentZoomLevel();
+//        int parentRadius = displayBuilder.getConstraintLayout().getHeight()/2;
+        locationService.getLocation().observe(this, loc ->{
+            displayIcon(loc);
+//            System.out.println("in");
+            //
+        });
     }
 
     public void zoomOut(View view) {
         displayBuilder.zoomOut();
+        locationService.getLocation().observe(this, loc ->{
+            displayIcon(loc);
+//            System.out.println("out");
+
+            //
+        });
     }
 }
