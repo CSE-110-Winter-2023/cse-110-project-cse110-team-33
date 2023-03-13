@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -54,6 +55,14 @@ public class LocationService implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        Pair<Double, Double> newLocation = new Pair<Double, Double>(location.getLatitude(), location.getLongitude());
+        if (locationValue.getValue() == newLocation) {
+            Log.d("GPS_LOST", "GPS signal is lost");
+        }
+        else {
+            Log.d("GPS_STABLE", "GPS signal is stable");
+        }
+
         this.locationValue.postValue(new Pair<Double, Double>(location.getLatitude(),
                 location.getLongitude()));
     }
