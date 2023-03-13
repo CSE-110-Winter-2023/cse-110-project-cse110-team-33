@@ -55,8 +55,9 @@ public class LocationService implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        Pair<Double, Double> oldLocation = getLocation().getValue();
         Pair<Double, Double> newLocation = new Pair<Double, Double>(location.getLatitude(), location.getLongitude());
-        if (locationValue.getValue() == newLocation) {
+        if (oldLocation.equals(newLocation)) {
             Log.d("GPS_LOST", "GPS signal is lost");
         }
         else {
