@@ -35,6 +35,7 @@ import com.example.socialcompass.model.Location;
 import com.example.socialcompass.model.LocationDao;
 import com.example.socialcompass.model.LocationDatabase;
 import com.example.socialcompass.utility.DisplayBuilder;
+import com.example.socialcompass.utility.DistanceCalculation;
 import com.example.socialcompass.utility.LocationService;
 import com.example.socialcompass.utility.OrientationService;
 import com.example.socialcompass.R;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private OrientationService orientationService;
     private LocationService locationService;
     private AngleCalculation calculator;
+    private DistanceCalculation distanceCalculator;
 
     private ImageView compassDisplay;
     private ConstraintLayout compassConstraintLayout;
@@ -107,10 +109,6 @@ public class MainActivity extends AppCompatActivity {
         params.bottomToBottom = compassConstraintLayout.getId();
         params.startToStart = compassConstraintLayout.getId();
         params.endToEnd = compassConstraintLayout.getId();
-
-
-
-
         getUID();
 
         if (public_code.equals("null")) {
@@ -253,10 +251,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayIcons(Pair<Double, Double> self_location) {
             // should move to display builder
-
-
             for (var liveLocation : this.locationList) {
                 liveLocation.observe(this, location -> {
+                    double distance = distanceCalculator.CalculateDistance(self_location.first,
+                            self_location.second, location.longitude, location.latitude);
+
                     if (!labels.containsKey(location.label)) {
                         TextView textView = new TextView(this);
                         textView.setId(View.generateViewId());
@@ -267,14 +266,18 @@ public class MainActivity extends AppCompatActivity {
                         newParams.circleAngle = 0;
 
                         // TODO: set radius with DistanceCalculator
-                        newParams.circleRadius = compassDisplay.getLayoutParams().width/2;
+
+
+                        newParams.circleRadius = (int) distance / 100;
                         newParams.circleConstraint = compassDisplay.getId();
 
                         compassConstraintLayout.addView(textView);
                         labels.put(location.label, textView);
                     }
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) labels.get(location.label).getLayoutParams();
-                    double relative_angle = calculator.calculateBearing(self_location.first, self_location.second, location.longitude, location.latitude);
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)
+                            labels.get(location.label).getLayoutParams();
+                    double relative_angle = calculator.calculateBearing(self_location.first,
+                            self_location.second, location.longitude, location.latitude);
                     params.circleAngle = (float) relative_angle;
                     labels.get(location.label).setLayoutParams(params);
                 });
