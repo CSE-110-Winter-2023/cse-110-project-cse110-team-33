@@ -57,8 +57,13 @@ public class LocationService implements LocationListener {
     public void onLocationChanged(@NonNull Location location) {
         Pair<Double, Double> oldLocation = getLocation().getValue();
         Pair<Double, Double> newLocation = new Pair<Double, Double>(location.getLatitude(), location.getLongitude());
-        if (oldLocation.equals(newLocation)) {
-            Log.d("GPS_LOST", "GPS signal is lost");
+        if (oldLocation != null) {
+            if (oldLocation.equals(newLocation)) {
+                Log.d("GPS_LOST", "GPS signal is lost");
+            }
+            else {
+                Log.d("GPS_STABLE", "GPS signal is stable");
+            }
         }
         else {
             Log.d("GPS_STABLE", "GPS signal is stable");
