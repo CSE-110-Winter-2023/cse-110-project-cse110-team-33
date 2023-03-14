@@ -42,7 +42,7 @@ public class DistanceCalculation {
         double smallerRadius = 0;
         double biggerRadius = 0;
         int currentSmallerLevel = 0;
-        System.out.println(actualDistance);
+        //System.out.println(actualDistance);
         if (actualDistance >= 1000) {
             smallerRadius = 1000;
             currentSmallerLevel = 4;
@@ -64,13 +64,13 @@ public class DistanceCalculation {
             currentSmallerLevel = 0;
         }
         if (smallerRadius >= arr[(int) level]) {
-            System.out.println("in");
+            //System.out.println("in");
 
             returnRadius = parentRadius;
         } else {
             double temp = (actualDistance - smallerRadius) / (biggerRadius - smallerRadius);
             returnRadius = levelPixel * (currentSmallerLevel) + temp * levelPixel;
-            System.out.println(level);
+           // System.out.println(level);
 
         }
         return returnRadius;
