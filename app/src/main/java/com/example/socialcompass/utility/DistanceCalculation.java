@@ -16,7 +16,7 @@ public class DistanceCalculation {
      *
      * Source: https://www.geeksforgeeks.org/program-distance-two-points-earth/
      */
-    public double CalculateDistance(double userLat, double userLong, double friendLat, double friendLong) {
+    public static double CalculateDistance(double userLat, double userLong, double friendLat, double friendLong) {
         double userLatRad = Math.toRadians(userLat);
         double userLongRad = Math.toRadians(userLong);
         double friendLatRad = Math.toRadians(friendLat);
