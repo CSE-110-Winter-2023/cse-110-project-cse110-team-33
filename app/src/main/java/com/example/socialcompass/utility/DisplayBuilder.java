@@ -38,7 +38,7 @@ public class DisplayBuilder {
     private List<LiveData<Location>> liveLocations = Collections.emptyList();
 
 //    private Map<String, TextView> labels = new HashMap<>();
-    private AngleCalculation calculator;
+    private AngleCalculation angleCalculator;
     private DistanceCalculation distanceCalculator;
 //    private ImageView compassDisplay = centerCircle.findViewById(R.id.compassDisplay);
 //    private ConstraintLayout compassConstraintLayout = parent.findViewById(R.id.compassConstraintLayout);
@@ -169,15 +169,12 @@ public class DisplayBuilder {
 
         double level = currentZoomLevel();
         double parentRadius = (double)getConstraintLayout().getHeight()/ 2.0;
-//        double parentRadius = 450;
+
         this.liveLocations = liveLocations;
 
-//         create icons
         double distance = distanceCalculator.CalculateDistance(self_location.first,
                 self_location.second, location.latitude, location.longitude);
-        //System.out.println("location lat/long: "+location.label+" "+location.latitude+" "+location.longitude);
-        //System.out.println("calcualted distance: "+location.label+" "+distance);
-        //double mockdistance = 300;
+
         if (!labels.containsKey(location.label)) {
             TextView textView = new TextView(context);
             textView.setId(View.generateViewId());
@@ -187,8 +184,7 @@ public class DisplayBuilder {
             textView.setLayoutParams(newParams);
             newParams.circleAngle = 0;
             newParams.circleRadius = (int)distanceCalculator.pixelCalculator(level,parentRadius,distance);
-            //System.out.println("circleRadius: "+newParams.circleRadius);
-//            newParams.circleRadius = (int) distance / 100;
+
             newParams.circleConstraint = compassDisplay.getId();
 
             compassConstraintLayout.addView(textView);
@@ -196,11 +192,19 @@ public class DisplayBuilder {
         }
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)
                 labels.get(location.label).getLayoutParams();
-        double relative_angle = calculator.calculateBearing(self_location.first,
+
+
+        double relative_angle = angleCalculator.calculateBearing(self_location.first,
                 self_location.second, location.latitude,location.longitude);
-        System.out.println("RelativeAngle to "+location.label+" "+relative_angle);
+//        Log.d("LOCS", "My location: " + self_location.first + ", " +
+//                self_location.second + " | Their location: " + location.latitude + ", " +
+//                location.longitude);
+//        Log.d("RELATIVEANGLE", location.label + ": " + relative_angle);
+
         params.circleAngle = (float) relative_angle;
         labels.get(location.label).setLayoutParams(params);
+
+
     }
 
     public ConstraintLayout getConstraintLayout() {

@@ -250,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayIcon(Pair<Double, Double> self_location){
+
         for (var liveLocation : this.locationList) {
             liveLocation.observe(this, location -> {
                 displayBuilder.setLiveLocations(self_location,location,labels,compassDisplay,compassConstraintLayout);
@@ -268,22 +269,36 @@ public class MainActivity extends AppCompatActivity {
 
     public void zoomIn(View view) {
         displayBuilder.zoomIn();
-//        int level = displayBuilder.currentZoomLevel();
-//        int parentRadius = displayBuilder.getConstraintLayout().getHeight()/2;
-        locationService.getLocation().observe(this, loc ->{
-            displayIcon(loc);
-//            System.out.println("in");
-            //
-        });
+        //locationService.unregisterLocationListener();
+        for (Map.Entry<String, TextView> entry : labels.entrySet()) {
+            compassConstraintLayout.removeView(entry.getValue());
+        }
+        labels.clear();
+        for (var liveLoc : this.locationList) {
+            liveLoc.removeObservers(this);
+        }
+        locationList.clear();
+
+        //locationService.registerLocationListener();
+        getFriendsToTrack();
+        updateLocation();
     }
 
     public void zoomOut(View view) {
         displayBuilder.zoomOut();
-        locationService.getLocation().observe(this, loc ->{
-            displayIcon(loc);
-//            System.out.println("out");
+        //locationService.unregisterLocationListener();
+        for (Map.Entry<String, TextView> entry : labels.entrySet()) {
+            compassConstraintLayout.removeView(entry.getValue());
+        }
+        labels.clear();
+        for (var liveLoc : this.locationList) {
+            liveLoc.removeObservers(this);
+        }
+        locationList.clear();
 
-            //
-        });
+        //locationService.registerLocationListener();
+        getFriendsToTrack();
+        updateLocation();
+
     }
 }
