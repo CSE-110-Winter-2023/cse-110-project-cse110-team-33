@@ -37,7 +37,9 @@ public class DisplayBuilder {
 
     private List<LiveData<Location>> liveLocations = Collections.emptyList();
 
-//    private Map<String, TextView> labels = new HashMap<>();
+    private int[] boundary = new int[]{0, 1, 10, 500, 1000};
+
+    //    private Map<String, TextView> labels = new HashMap<>();
     private AngleCalculation angleCalculator;
     private DistanceCalculation distanceCalculator;
 //    private ImageView compassDisplay = centerCircle.findViewById(R.id.compassDisplay);
@@ -161,11 +163,8 @@ public class DisplayBuilder {
     }
 
     // should we update location icons in builder?
-    public void setLiveLocations(Pair<Double, Double> self_location, Location location, Map<String, TextView> labels,ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
-        // remove all icons
-//        for (Map.Entry<String, TextView> entry : labels.entrySet()) {
-//            labels.remove(entry.getKey());
-//        }
+    public void setLiveLocations(Pair<Double, Double> self_location, Location location,
+                                 Map<String, TextView> labels,ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
 
         double level = currentZoomLevel();
         double parentRadius = (double)getConstraintLayout().getHeight()/ 2.0;
@@ -179,6 +178,30 @@ public class DisplayBuilder {
             TextView textView = new TextView(context);
             textView.setId(View.generateViewId());
             textView.setText(location.label);
+            //If the view is outside the boundary, make it X
+            switch (zoom){
+                case 1:
+                    if (distance >= boundary[1]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 2:
+                    if (distance > boundary[2]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 3:
+                    if (distance > boundary[3]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 4:
+                    if (distance > boundary[4]){
+                        textView.setText("X");
+                    }
+                    break;
+            }
+
 
             ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
             textView.setLayoutParams(newParams);
@@ -196,10 +219,6 @@ public class DisplayBuilder {
 
         double relative_angle = angleCalculator.calculateBearing(self_location.first,
                 self_location.second, location.latitude,location.longitude);
-//        Log.d("LOCS", "My location: " + self_location.first + ", " +
-//                self_location.second + " | Their location: " + location.latitude + ", " +
-//                location.longitude);
-//        Log.d("RELATIVEANGLE", location.label + ": " + relative_angle);
 
         params.circleAngle = (float) relative_angle;
         labels.get(location.label).setLayoutParams(params);
