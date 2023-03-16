@@ -2,6 +2,7 @@ package com.example.socialcompass.utility;
 
 import android.app.Activity;
 import android.util.Pair;
+import android.view.Gravity;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -156,17 +157,12 @@ public class DisplayBuilder {
         if (zoom == 1) return this;
         zoom--;
         updateZoom();
-
-//        displayIcon(level,parentRadius,this);
-
-//        Log.d("ZOOM", String.valueOf(zoom));
         return this;
     }
     public DisplayBuilder zoomOut() {
         if (zoom == 4) return this;
         zoom++;
         updateZoom();
-//        Log.d("ZOOM", String.valueOf(zoom));
         return this;
     }
 
@@ -211,20 +207,21 @@ public class DisplayBuilder {
             }
 
 
-            ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
+            ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             textView.setLayoutParams(newParams);
+            textView.setGravity(Gravity.CENTER);
             newParams.circleAngle = 0;
             newParams.circleRadius = (int)distanceCalculator.pixelCalculator(level,parentRadius,distance);
 
-            newParams.circleConstraint = compassDisplay.getId();
+            newParams.circleConstraint = compassConstraintLayout.getId();
 
             compassConstraintLayout.addView(textView);
             labels.put(location.label, textView);
         }
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)
                 labels.get(location.label).getLayoutParams();
-
-
         double relative_angle = angleCalculator.calculateBearing(self_location.first,
                 self_location.second, location.latitude,location.longitude);
 

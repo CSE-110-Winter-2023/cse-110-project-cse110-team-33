@@ -85,10 +85,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/compassConstraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="130dp">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationDisplay"
+        app:layout_constraintBottom_toTopOf="@id/friendManagerBtn"
+        android:layout_marginHorizontal="64dp">
 
         <ImageView
             android:id="@+id/compassDisplay"
@@ -108,27 +111,13 @@
     <ImageView
         android:id="@+id/needleDisplay"
         android:layout_width="48dp"
-        android:layout_height="68dp"
+        android:layout_height="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_bias="0.33"
         app:srcCompat="@drawable/needle" />
-
-    <!--    <Button-->
-    <!--        android:id="@+id/locationManagerButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:background="@drawable/button"-->
-    <!--        android:onClick="launchLocationListActivity"-->
-    <!--        android:text="Location Manager"-->
-    <!--        app:backgroundTint="@null"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="0.8" />-->
 
     <Button
         android:id="@+id/friendManagerBtn"
@@ -145,7 +134,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.8" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/compassConstraintLayout"
+        app:layout_constraintBottom_toBottomOf="@id/compassConstraintLayout"
+        app:layout_constraintEnd_toEndOf="parent">
+
     <ImageButton
+        android:layout_weight="1"
         android:id="@+id/btnZoomIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -156,6 +154,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
+        android:layout_weight="1"
         android:id="@+id/btnZoomOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -164,6 +163,8 @@
         android:src="@drawable/baseline_remove_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    </LinearLayout>
 
     <!--    <Button-->
     <!--        android:id="@+id/dataEntryPage"-->
