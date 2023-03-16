@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.socialcompass.R;
 import com.example.socialcompass.model.Location;
@@ -36,6 +37,10 @@ public class FirstLaunchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_launch);
+
+        displayNameInput = findViewById(R.id.displayNameInput);
+        publicIDInput = findViewById(R.id.publicIDInput);
+        serverURLInput =findViewById(R.id.serverURLInput);
     }
 
     public boolean validNewPublicID(String public_code) throws ExecutionException, InterruptedException {
