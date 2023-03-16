@@ -37,6 +37,7 @@ import com.example.socialcompass.model.LocationDao;
 import com.example.socialcompass.model.LocationDatabase;
 import com.example.socialcompass.utility.DisplayBuilder;
 import com.example.socialcompass.utility.DistanceCalculation;
+import com.example.socialcompass.utility.GPSChecker;
 import com.example.socialcompass.utility.LocationService;
 import com.example.socialcompass.utility.OrientationService;
 import com.example.socialcompass.R;
@@ -80,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
 
     private AngleCalculation calculator;
     private DistanceCalculation distanceCalculator;
-    private String public_code;
-    private String private_code;
-    private String display_name;
+    public String public_code;
+    public String private_code;
+    public String display_name;
 
     private List<LiveData<Location>> locationList;
 
@@ -95,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setUp();
+        checkLocationPermissions();
+        locationService = LocationService.singleton(this);
+        orientationService = new OrientationService(this);
 
         locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
 
@@ -126,30 +130,8 @@ public class MainActivity extends AppCompatActivity {
         TextView gpsText = (TextView) findViewById(R.id.gpsText);
         ImageView gpsImage = (ImageView) findViewById(R.id.gpsImage);
 
-        final Handler handler = new Handler();
-        final int delay = 5000; // 1000 milliseconds == 1 second
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                if(isGPSEnabled()){
-                    Log.d("GPSSTATUS", "enabled!");
-                    gpsText.setText("GPS Signal Detected");
-                    gpsImage.setImageResource(R.drawable.circle_green);
-                }
-                else{
-                    long currentTime = Calendar.getInstance().getTimeInMillis();
-                    long millis = currentTime - locationService.getUpdatedAt();
-                    String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-                            TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-                            TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-
-                    Log.d("GPSSTATUS", hms);
-
-                    gpsText.setText(hms);
-                    gpsImage.setImageResource(R.drawable.circle_red);
-                }
-                handler.postDelayed(this, delay);
-            }
-        }, delay);
+        GPSChecker gpsChecker = new GPSChecker(locationService, gpsText, gpsImage);
+        gpsChecker.runGPSChecker();
 
 
     }
@@ -159,9 +141,6 @@ public class MainActivity extends AppCompatActivity {
         locationDao = db.locationDao();
         api = LocationAPI.provide();
         repo = new LocationRepository(locationDao, api);
-        checkLocationPermissions();
-        locationService = LocationService.singleton(this);
-        orientationService = new OrientationService(this);
     }
 
     @Override
@@ -337,9 +316,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    public boolean isGPSEnabled(){
-        long currentTime = Calendar.getInstance().getTimeInMillis();
-        return locationService.getUpdatedAt() > currentTime - 5000;
-    }
 }
