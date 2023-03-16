@@ -16,6 +16,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import android.Manifest;
 
+import java.util.Calendar;
+
 public class LocationService implements LocationListener {
 
     private static LocationService instance;
@@ -43,6 +45,7 @@ public class LocationService implements LocationListener {
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         // Register sensor listeners
         this.registerLocationListener();
+        lastUpdatedAt = Calendar.getInstance().getTimeInMillis();
     }
 
     public void registerLocationListener(){

@@ -43,6 +43,8 @@ import com.example.socialcompass.R;
 import com.example.socialcompass.viewmodel.LocationViewModel;
 
 
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,7 +52,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -119,15 +123,29 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        TextView gpsText = (TextView) findViewById(R.id.gpsText);
+        ImageView gpsImage = (ImageView) findViewById(R.id.gpsImage);
+
         final Handler handler = new Handler();
         final int delay = 5000; // 1000 milliseconds == 1 second
         handler.postDelayed(new Runnable() {
             public void run() {
                 if(isGPSEnabled()){
                     Log.d("GPSSTATUS", "enabled!");
+                    gpsText.setText("GPS Signal Detected");
+                    gpsImage.setImageResource(R.drawable.circle_green);
                 }
                 else{
-                    Log.d("GPSSTATUS", "disabled!");
+                    long currentTime = Calendar.getInstance().getTimeInMillis();
+                    long millis = currentTime - locationService.getUpdatedAt();
+                    String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+                            TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                            TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+
+                    Log.d("GPSSTATUS", hms);
+
+                    gpsText.setText(hms);
+                    gpsImage.setImageResource(R.drawable.circle_red);
                 }
                 handler.postDelayed(this, delay);
             }
