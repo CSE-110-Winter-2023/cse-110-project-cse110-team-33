@@ -110,8 +110,9 @@ public class MainActivity extends AppCompatActivity {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) child.getLayoutParams();
         compassConstraintLayout.addView(child);
 
-        params.height = 900;
-        params.width = 900;
+        params.height = compassConstraintLayout.getHeight();
+        params.width = compassConstraintLayout.getWidth();
+        params.setMargins(40, 40, 40,40);
         params.topToTop = compassConstraintLayout.getId();
         params.bottomToBottom = compassConstraintLayout.getId();
         params.startToStart = compassConstraintLayout.getId();
