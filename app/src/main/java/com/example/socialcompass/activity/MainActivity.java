@@ -277,10 +277,10 @@ public class MainActivity extends AppCompatActivity {
         for (var liveLoc : this.locationList) {
             liveLoc.removeObservers(this);
         }
-        locationList.clear();
-
-        //locationService.registerLocationListener();
-        getFriendsToTrack();
+//        locationList.clear();
+//
+//        //locationService.registerLocationListener();
+//        getFriendsToTrack();
         updateLocation();
     }
 
@@ -294,10 +294,10 @@ public class MainActivity extends AppCompatActivity {
         for (var liveLoc : this.locationList) {
             liveLoc.removeObservers(this);
         }
-        locationList.clear();
+//        locationList.clear();
 
         //locationService.registerLocationListener();
-        getFriendsToTrack();
+//        getFriendsToTrack();
         updateLocation();
 
     }
