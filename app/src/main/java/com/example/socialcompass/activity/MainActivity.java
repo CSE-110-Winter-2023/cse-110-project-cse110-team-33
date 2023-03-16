@@ -124,10 +124,10 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             public void run() {
                 if(isGPSEnabled()){
-                    //Log.d("GPSSTATUS", "enabled!");
+                    Log.d("GPSSTATUS", "enabled!");
                 }
                 else{
-                    //Log.d("GPSSTATUS", "disabled!");
+                    Log.d("GPSSTATUS", "disabled!");
                 }
                 handler.postDelayed(this, delay);
             }

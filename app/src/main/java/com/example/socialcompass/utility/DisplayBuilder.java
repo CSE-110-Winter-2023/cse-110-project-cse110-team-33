@@ -116,13 +116,6 @@ public class DisplayBuilder {
             i++;
         }
 
-
-
-//        double percent = 1;
-//        for (int i = 3; i >= 0; i--) {
-//            this.radarImageViews[i] = addImageViewPercent(percent);
-//            percent -= 0.25;
-//        }
     }
 
     private void updateZoom() {

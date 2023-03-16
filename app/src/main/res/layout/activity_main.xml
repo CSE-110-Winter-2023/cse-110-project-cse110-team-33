@@ -11,15 +11,18 @@
         android:id="@+id/displayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="NAME"
+        android:text="Welcome, NAME!"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp"/>
 
     <TextView
         android:id="@+id/publicCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="public code"
+        android:text="UID: public code"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/displayName" />
 
@@ -29,24 +32,26 @@
         android:layout_height="wrap_content"
         android:text="private code"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/publicCode" />
+        app:layout_constraintTop_toBottomOf="@id/publicCode"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/orientationDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Orientation Display"
+        android:text="Orientation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintVertical_bias="0.15" />
 
     <TextView
         android:id="@+id/locationDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location Display"
+        android:textAlignment="center"
+        android:text="You are at: \n Location"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,6 +69,7 @@
             android:id="@+id/compassDisplay"
             android:layout_width="172dp"
             android:layout_height="291dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -85,19 +91,19 @@
         app:layout_constraintVertical_bias="0.3"
         app:srcCompat="@drawable/needle" />
 
-    <Button
-        android:id="@+id/locationManagerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button"
-        android:onClick="launchLocationListActivity"
-        android:text="Location Manager"
-        app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
+<!--    <Button-->
+<!--        android:id="@+id/locationManagerButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@drawable/button"-->
+<!--        android:onClick="launchLocationListActivity"-->
+<!--        android:text="Location Manager"-->
+<!--        app:backgroundTint="@null"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="0.8" />-->
 
     <Button
         android:id="@+id/friendManagerBtn"
@@ -110,7 +116,9 @@
         app:backgroundTint="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/locationManagerButton" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.8"/>
 
     <ImageButton
         android:layout_width="wrap_content"
