@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private String public_code;
     private String private_code;
     private String display_name;
+    private String MockURL;
 
     private List<LiveData<Location>> locationList;
 
@@ -89,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setUp();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        MockURL = prefs.getString("URL", "");
 
         locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
 
@@ -223,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                     private_code,
                     loc.first,
                     loc.second,
-                    "https://socialcompass.goto.ucsd.edu/location/");
+                    MockURL);
 
         });
     }
@@ -246,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         fromLocal.observe(this, listEntity-> {
             fromLocal.removeObservers(this);
             Log.d("UIDSTOTRACK", listEntity.toString());
-            this.locationList = locationVM.getLocationsLive(listEntity);
+            this.locationList = locationVM.getLocationsLive(listEntity,MockURL);
         });
     }
 

@@ -19,6 +19,6 @@ public class US13Tests {
         double lat2 = 90;
         double long2 = 90;
 
-        assertEquals(10007.54339801, calculator.CalculateDistance(lat1, long1, lat2, long2), DELTA);
+        assertEquals(6218.397248765048, calculator.CalculateDistance(lat1, long1, lat2, long2), DELTA);
     }
 }

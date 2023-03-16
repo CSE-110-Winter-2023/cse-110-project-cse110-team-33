@@ -31,7 +31,7 @@ public class LocationRepository {
     // Synced Methods
     // ==============
 
-    public LiveData<Location> getSynced(String public_code) throws ExecutionException, InterruptedException {
+    public LiveData<Location> getSynced(String public_code, String MockURL) throws ExecutionException, InterruptedException {
         var loc = new MediatorLiveData<Location>();
 
         Observer<Location> updateFromRemote = theirLoc -> {
@@ -46,7 +46,7 @@ public class LocationRepository {
         // If we get a local update, pass it on.
         loc.addSource(getLocal(public_code), loc::postValue);
         // If we get a remote update, update the local version (triggering the above observer)
-        loc.addSource(getRemote(public_code), updateFromRemote);
+        loc.addSource(getRemote(public_code, MockURL), updateFromRemote);
 
         return loc;
 //        return null;
@@ -85,8 +85,8 @@ public class LocationRepository {
     // Remote Methods
     // ==============
 
-    public LiveData<Location> getRemote(String public_code) throws ExecutionException, InterruptedException {
-        Location initialLoc = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/").get();
+    public LiveData<Location> getRemote(String public_code, String mockURL) throws ExecutionException, InterruptedException {
+        Location initialLoc = api.getAsync(public_code, mockURL).get();
         if (initialLoc.public_code == null) return null;
 
         var location = new MutableLiveData<Location>();
@@ -94,7 +94,7 @@ public class LocationRepository {
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(() -> {
-            Future<Location> future = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/");
+            Future<Location> future = api.getAsync(public_code, mockURL);
             try {
                 location.postValue(future.get(1, TimeUnit.SECONDS));
             } catch (ExecutionException e) {

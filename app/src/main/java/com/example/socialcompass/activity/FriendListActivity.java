@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +29,8 @@ public class FriendListActivity extends AppCompatActivity {
     public EditText UIDInput;
     public Button addBtn;
 
+    public String MockURL;
+
     FriendViewModel viewModel;
 
     @Override
@@ -36,6 +41,8 @@ public class FriendListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         UIDInput = findViewById(R.id.UIDInput);
         addBtn = findViewById(R.id.addBtn);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        MockURL = prefs.getString("URL", "");
 
         // viewmodel
         viewModel = new ViewModelProvider(this).get(FriendViewModel.class);
@@ -61,7 +68,7 @@ public class FriendListActivity extends AppCompatActivity {
 
     public void addNewLocation(View view) throws ExecutionException, InterruptedException {
         String UID = UIDInput.getText().toString().trim();
-        var newLocation = viewModel.insertNewLocation(UID);
+        var newLocation = viewModel.insertNewLocation(UID, MockURL);
         if (newLocation == null) {
             AlertBuilder.showAlert(this, "Not a valid UID");
             return;

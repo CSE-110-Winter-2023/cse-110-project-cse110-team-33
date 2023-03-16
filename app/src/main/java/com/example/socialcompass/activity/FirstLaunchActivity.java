@@ -4,7 +4,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Database;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,19 +30,17 @@ public class FirstLaunchActivity extends AppCompatActivity {
 
     EditText displayNameInput;
     EditText publicIDInput;
+    EditText serverURLInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_launch);
-
-        displayNameInput = findViewById(R.id.displayNameInput);
-        publicIDInput = findViewById(R.id.publicIDInput);
     }
 
     public boolean validNewPublicID(String public_code) throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
-        Future<Location> result = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/");
+        Future<Location> result = api.getAsync(public_code, serverURLInput.getText().toString().trim());
         var toCheck = result.get().public_code;
         if(toCheck == null){
             return true;
@@ -53,6 +53,7 @@ public class FirstLaunchActivity extends AppCompatActivity {
     public void createUser(View view) throws ExecutionException, InterruptedException {
         String display_name = displayNameInput.getText().toString().trim();
         String public_code = publicIDInput.getText().toString().trim();
+        String mock_URL = serverURLInput.getText().toString().trim();
         if(!validNewPublicID(public_code)){
             AlertBuilder.showAlert(this, "That Public ID is already taken. Please try again!");
             return;
@@ -67,12 +68,13 @@ public class FirstLaunchActivity extends AppCompatActivity {
         editor.putString("public_code", public_code);
         editor.putString("private_code", private_code);
         editor.putString("display_name", display_name);
+        editor.putString("URL", mock_URL);
 
         editor.apply();
 
         LocationAPI api = LocationAPI.provide();
         api.putAsync(new Location(public_code, -1, -1,
-                display_name), private_code, "https://socialcompass.goto.ucsd.edu/location/");
+                display_name), private_code, mock_URL);
 
         // check if profile was created? alert if not
 

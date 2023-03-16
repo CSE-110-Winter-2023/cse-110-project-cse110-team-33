@@ -35,11 +35,11 @@ public class FriendViewModel extends AndroidViewModel {
         return locations;
     }
 
-    public LiveData<Location> insertNewLocation(String UID) throws ExecutionException, InterruptedException {
+    public LiveData<Location> insertNewLocation(String UID, String mockURL) throws ExecutionException, InterruptedException {
         if (!repo.existsLocal(UID)) {
 //            var newLocation = new Location(UID, -1, -1, null);
 //            repo.upsertLocal(newLocation);
-            LiveData<Location> fromRemote = repo.getRemote(UID);
+            LiveData<Location> fromRemote = repo.getRemote(UID, mockURL);
             if (fromRemote == null) return null; // doesn't exist
             repo.upsertLocal(fromRemote.getValue());
         }

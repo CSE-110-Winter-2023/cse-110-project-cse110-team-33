@@ -31,12 +31,12 @@ public class LocationViewModel extends AndroidViewModel {
         this.repo = new LocationRepository(dao, api);
     }
 
-    public List<LiveData<Location>> getLocationsLive(List<Location> locationList) {
+    public List<LiveData<Location>> getLocationsLive(List<Location> locationList, String MockURL) {
 
         List<LiveData<Location>> liveLocationList = new ArrayList<>();
 
         for (var loc : locationList) {
-            LiveData<Location> liveLoc = getLocation(loc.public_code);
+            LiveData<Location> liveLoc = getLocation(loc.public_code, MockURL);
             liveLocationList.add(liveLoc);
         }
 
@@ -44,9 +44,9 @@ public class LocationViewModel extends AndroidViewModel {
 
     }
 
-    public LiveData<Location> getLocation(String public_code) {
+    public LiveData<Location> getLocation(String public_code, String MockURL) {
         try {
-            LiveData<Location> location = repo.getSynced(public_code);
+            LiveData<Location> location = repo.getSynced(public_code, MockURL);
             return location;
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
