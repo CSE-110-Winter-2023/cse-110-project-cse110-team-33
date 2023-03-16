@@ -32,7 +32,7 @@ public class DisplayBuilder {
     private ImageView centerCircle;
     // for centering views
 
-    private int zoom = 4; // values between 1 and 4, default for now is 4
+    private int zoom = 2; // values between 1 and 4, default for now is 4
     private ImageView[] radarImageViews = new ImageView[4]; // 0-1, 1-10, 10-500, 500+ miles
 
     private List<LiveData<Location>> liveLocations = Collections.emptyList();
@@ -104,10 +104,25 @@ public class DisplayBuilder {
 
     private void createRadar() {
         double percent = 1;
-        for (int i = 3; i >= 0; i--) {
+        int i = 0;
+        while (i < 2) {
             this.radarImageViews[i] = addImageViewPercent(percent);
-            percent -= 0.25;
+            percent -= 0.5;
+            i++;
         }
+        while (i < 4) {
+            this.radarImageViews[i] = addImageViewPercent(1);
+            this.radarImageViews[i].setVisibility(View.INVISIBLE);
+            i++;
+        }
+
+
+
+//        double percent = 1;
+//        for (int i = 3; i >= 0; i--) {
+//            this.radarImageViews[i] = addImageViewPercent(percent);
+//            percent -= 0.25;
+//        }
     }
 
     private void updateZoom() {
