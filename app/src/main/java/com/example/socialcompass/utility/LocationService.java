@@ -20,6 +20,7 @@ public class LocationService implements LocationListener {
     private Activity activity;
 
     private MutableLiveData<Pair<Double, Double>> locationValue;
+    private long lastUpdatedAt;
 
     private final LocationManager locationManager;
 
@@ -56,11 +57,14 @@ public class LocationService implements LocationListener {
     public void onLocationChanged(@NonNull Location location) {
         this.locationValue.postValue(new Pair<Double, Double>(location.getLatitude(),
                 location.getLongitude()));
+        this.lastUpdatedAt = location.getTime();
     }
 
     public void unregisterLocationListener() {locationManager.removeUpdates(this); }
 
     public LiveData<Pair<Double, Double>> getLocation(){ return this.locationValue; }
+
+    public long getUpdatedAt(){ return this.lastUpdatedAt; }
 
     public void setMockLocationSource(MutableLiveData<Pair<Double, Double>> mockDataSource) {
         unregisterLocationListener();

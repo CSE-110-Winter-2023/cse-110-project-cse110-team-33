@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -42,6 +43,7 @@ import com.example.socialcompass.R;
 import com.example.socialcompass.viewmodel.LocationViewModel;
 
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -116,6 +118,20 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, FirstLaunchActivity.class);
             startActivity(intent);
         }
+
+        final Handler handler = new Handler();
+        final int delay = 5000; // 1000 milliseconds == 1 second
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(isGPSEnabled()){
+                    //Log.d("GPSSTATUS", "enabled!");
+                }
+                else{
+                    //Log.d("GPSSTATUS", "disabled!");
+                }
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
 
 
     }
@@ -300,5 +316,11 @@ public class MainActivity extends AppCompatActivity {
 //        getFriendsToTrack();
         updateLocation();
 
+    }
+
+
+    public boolean isGPSEnabled(){
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        return locationService.getUpdatedAt() > currentTime - 5000;
     }
 }
