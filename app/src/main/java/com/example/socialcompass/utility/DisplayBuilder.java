@@ -1,12 +1,10 @@
 package com.example.socialcompass.utility;
 
-import android.app.Activity;
 import android.util.Pair;
 import android.view.Gravity;
 import android.widget.TextView;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +15,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 
 import com.example.socialcompass.R;
 import com.example.socialcompass.model.Location;
-
-import org.w3c.dom.Text;
 
 public class DisplayBuilder {
 
@@ -227,7 +222,8 @@ public class DisplayBuilder {
 
         params.circleAngle = (float) relative_angle;
         labels.get(location.label).setLayoutParams(params);
-
+        int loc[] = new int[2];
+        labels.get(location.label).getLocationOnScreen(loc);
 
     }
 
@@ -237,6 +233,85 @@ public class DisplayBuilder {
 
     public int currentZoomLevel() {
         return zoom;
+    }
+
+    public void viewsOverlap(Map<String, TextView> labels) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for (var target : labels.entrySet()) {
+
+                    int targetDimens[] = new int[4];
+                    getDimens(target.getValue(), targetDimens);
+
+                    ConstraintLayout.LayoutParams targetParams =
+                            (ConstraintLayout.LayoutParams) target.getValue().getLayoutParams();
+
+                    for (var check : labels.entrySet()) {
+                        if (target.getKey().equals(check.getKey())) continue;
+
+                        int checkDimens[] = new int[4];
+                        getDimens(check.getValue(), checkDimens);
+
+                        if (overlap(targetDimens, checkDimens)) {
+                            Log.d("ABSOLUTELOC", String.format("%s %s",
+                                    target.getKey(), check.getKey()));
+
+
+                            ConstraintLayout.LayoutParams checkParams =
+                                    (ConstraintLayout.LayoutParams) check.getValue().getLayoutParams();
+
+
+                            if (!target.getValue().getText().equals("X")){
+                                target.getValue().setText(target.getKey().substring(0, 4));
+                            }
+                            if (!check.getValue().getText().equals("X")){
+                                check.getValue().setText(check.getKey().substring(0, 4));
+                            }
+
+                            Log.d("ABSOLUTELOC", String.format("%d %d",
+                                    targetParams.circleRadius, checkParams.circleRadius));
+
+                            if (Math.abs(targetParams.circleRadius - checkParams.circleRadius) > 60) continue;
+
+                            if (targetParams.circleRadius <= checkParams.circleRadius) {
+                                targetParams.circleRadius -= 5;
+                                checkParams.circleRadius += 5;
+                            } else {
+                                checkParams.circleRadius -= 5;
+                                targetParams.circleRadius += 5;
+                            }
+
+                        }
+
+                    }
+
+            }
+        }
+        }).run();
+    }
+
+    private void getDimens(View view, int[] dimens) {
+
+        int loc[] = new int[2];
+        view.getLocationOnScreen(loc);
+
+        dimens[0] = loc[0];
+        dimens[1] = loc[1];
+        dimens[2] = view.getWidth();
+        dimens[3] = view.getHeight();
+
+    }
+
+    private boolean overlap(int[] target, int[] check) {
+
+        boolean horizontalOverlap = (Math.abs(target[0] - check[0]) <= target[2] + check[2]);
+        boolean verticalOverlap = (Math.abs(target[1] - check[1]) <= target[3] + check[3]);
+
+        if (horizontalOverlap && verticalOverlap) return true;
+        return false;
     }
 
 

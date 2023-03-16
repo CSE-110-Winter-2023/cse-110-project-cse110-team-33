@@ -289,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
             liveLocation.observe(this, location -> {
                 displayBuilder.setLiveLocations(self_location,location,labels,compassDisplay,compassConstraintLayout);
             });
+            displayBuilder.viewsOverlap(labels);
         }
     }
 
