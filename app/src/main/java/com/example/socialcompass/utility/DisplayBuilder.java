@@ -168,7 +168,8 @@ public class DisplayBuilder {
 
     // should we update location icons in builder?
     public void setLiveLocations(Pair<Double, Double> self_location, Location location,
-                                 Map<String, TextView> labels,ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
+                                 Map<String, TextView> labels,
+                                 ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
 
         double level = currentZoomLevel();
         double parentRadius = (double)getConstraintLayout().getHeight()/ 2.0;
@@ -177,11 +178,15 @@ public class DisplayBuilder {
 
         double distance = distanceCalculator.CalculateDistance(self_location.first,
                 self_location.second, location.latitude, location.longitude);
+        double relative_angle = angleCalculator.calculateBearing(self_location.first,
+                self_location.second, location.latitude,location.longitude);
 
         if (!labels.containsKey(location.label)) {
             TextView textView = new TextView(context);
             textView.setId(View.generateViewId());
             textView.setText(location.label);
+
+
             //If the view is outside the boundary, make it X
             switch (zoom){
                 case 1:
@@ -222,8 +227,7 @@ public class DisplayBuilder {
         }
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)
                 labels.get(location.label).getLayoutParams();
-        double relative_angle = angleCalculator.calculateBearing(self_location.first,
-                self_location.second, location.latitude,location.longitude);
+
 
         params.circleAngle = (float) relative_angle;
         labels.get(location.label).setLayoutParams(params);
