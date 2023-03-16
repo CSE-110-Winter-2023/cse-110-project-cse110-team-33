@@ -23,6 +23,7 @@ public class LocationAPI {
 
     private volatile static LocationAPI instance = null;
 
+    private static String url = "";
     private OkHttpClient client;
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
@@ -42,7 +43,7 @@ public class LocationAPI {
     public Location get(String public_code) {
 
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + public_code)
+                .url(url+ public_code)
                 .method("GET", null)
                 .build();
 
@@ -80,7 +81,7 @@ public class LocationAPI {
 
         var body = RequestBody.create(jsonString, JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + loc.public_code)
+                .url(url + loc.public_code)
                 .method("PUT", body)
                 .build();
 
@@ -109,7 +110,7 @@ public class LocationAPI {
 
         var body = RequestBody.create(jsonString, JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + loc.public_code)
+                .url(url + loc.public_code)
                 .method("DELETE", body)
                 .build();
 
@@ -141,7 +142,7 @@ public class LocationAPI {
 
         var body = RequestBody.create(jsonString, JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + public_code)
+                .url(url + public_code)
                 .method("PATCH", body)
                 .build();
 
@@ -159,6 +160,10 @@ public class LocationAPI {
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> patch(public_code, private_code, latitude, longitude));
         return future;
+    }
+    @AnyThread
+    public void setURL(String mockURL) {
+        this.url = mockURL;
     }
 }
 

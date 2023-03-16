@@ -28,14 +28,16 @@ public class FirstLaunchActivity extends AppCompatActivity {
 
     EditText displayNameInput;
     EditText publicIDInput;
-
+    EditText serverURL;
+    LocationAPI api;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_launch);
-
+        serverURL = findViewById(R.id.ServerURL);
         displayNameInput = findViewById(R.id.displayNameInput);
         publicIDInput = findViewById(R.id.publicIDInput);
+        api = LocationAPI.provide();
     }
 
     public boolean validNewPublicID(String public_code) throws ExecutionException, InterruptedException {
@@ -53,6 +55,10 @@ public class FirstLaunchActivity extends AppCompatActivity {
     public void createUser(View view) throws ExecutionException, InterruptedException {
         String display_name = displayNameInput.getText().toString().trim();
         String public_code = publicIDInput.getText().toString().trim();
+        String server_URL = serverURL.getText().toString().trim();
+        if (!server_URL.equals("")) {
+            api.setURL(server_URL);
+        }
         if(!validNewPublicID(public_code)){
             AlertBuilder.showAlert(this, "That Public ID is already taken. Please try again!");
             return;
