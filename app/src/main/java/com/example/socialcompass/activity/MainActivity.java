@@ -222,7 +222,8 @@ public class MainActivity extends AppCompatActivity {
             repo.upsertRemote(public_code,
                     private_code,
                     loc.first,
-                    loc.second);
+                    loc.second,
+                    "https://socialcompass.goto.ucsd.edu/location/");
 
         });
     }

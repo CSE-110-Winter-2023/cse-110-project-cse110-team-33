@@ -86,7 +86,7 @@ public class LocationRepository {
     // ==============
 
     public LiveData<Location> getRemote(String public_code) throws ExecutionException, InterruptedException {
-        Location initialLoc = api.getAsync(public_code).get();
+        Location initialLoc = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/").get();
         if (initialLoc.public_code == null) return null;
 
         var location = new MutableLiveData<Location>();
@@ -94,7 +94,7 @@ public class LocationRepository {
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> scheduledFuture = executor.scheduleAtFixedRate(() -> {
-            Future<Location> future = api.getAsync(public_code);
+            Future<Location> future = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/");
             try {
                 location.postValue(future.get(1, TimeUnit.SECONDS));
             } catch (ExecutionException e) {
@@ -109,8 +109,8 @@ public class LocationRepository {
         return location;
     }
 
-    public void upsertRemote(String public_code, String private_code, Double latitude, Double longitude) {
-        api.patchAsync(public_code, private_code, latitude, longitude);
+    public void upsertRemote(String public_code, String private_code, Double latitude, Double longitude, String MockURL) {
+        api.patchAsync(public_code, private_code, latitude, longitude, MockURL);
     }
 
 }

@@ -39,12 +39,11 @@ public class LocationAPI {
     }
 
     @WorkerThread
-    public Location get(String public_code) {
-
-        var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + public_code)
-                .method("GET", null)
-                .build();
+    public Location get(String public_code, String MockURL) {
+            var request = new Request.Builder()
+                    .url(MockURL+ public_code)
+                    .method("GET", null)
+                    .build();
 
         try (var response = client.newCall(request).execute()) {
             assert response.body() != null;
@@ -58,15 +57,15 @@ public class LocationAPI {
     }
 
     @AnyThread
-    public Future<Location> getAsync(String public_code) {
+    public Future<Location> getAsync(String public_code, String MockURL) {
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> get(public_code));
+        var future = executor.submit(() -> get(public_code, MockURL));
 
         return future;
     }
 
     @WorkerThread
-    public String put(Location loc, String private_code) {
+    public String put(Location loc, String private_code, String MockURL) {
 
         JsonElement jsonElement = new Gson().toJsonTree(loc);
         JsonObject jsonObject = (JsonObject) jsonElement;
@@ -80,7 +79,7 @@ public class LocationAPI {
 
         var body = RequestBody.create(jsonString, JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + loc.public_code)
+                .url(MockURL + loc.public_code)
                 .method("PUT", body)
                 .build();
 
@@ -94,14 +93,14 @@ public class LocationAPI {
     }
 
     @AnyThread
-    public Future<String> putAsync(Location loc, String private_code) {
+    public Future<String> putAsync(Location loc, String private_code, String MockURL) {
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> put(loc, private_code));
+        var future = executor.submit(() -> put(loc, private_code, MockURL));
         return future;
     }
 
     @WorkerThread
-    public String delete(Location loc, String private_code) {
+    public String delete(Location loc, String private_code, String MockURL) {
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("private_code", private_code);
@@ -109,7 +108,7 @@ public class LocationAPI {
 
         var body = RequestBody.create(jsonString, JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + loc.public_code)
+                .url(MockURL + private_code)
                 .method("DELETE", body)
                 .build();
 
@@ -123,15 +122,15 @@ public class LocationAPI {
     }
 
     @AnyThread
-    public Future<String> deleteAsync(Location loc, String private_code) {
+    public Future<String> deleteAsync(Location loc, String private_code, String MockURL) {
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> delete(loc, private_code));
+        var future = executor.submit(() -> delete(loc, private_code, MockURL));
         return future;
     }
 
 
     @WorkerThread
-    public String patch(String public_code, String private_code, Double latitude, Double longitude) {
+    public String patch(String public_code, String private_code, Double latitude, Double longitude, String MockURL) {
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("private_code", private_code);
@@ -141,7 +140,7 @@ public class LocationAPI {
 
         var body = RequestBody.create(jsonString, JSON);
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + public_code)
+                .url(MockURL + public_code)
                 .method("PATCH", body)
                 .build();
 
@@ -155,9 +154,9 @@ public class LocationAPI {
     }
 
     @AnyThread
-    public Future<String> patchAsync(String public_code, String private_code, Double latitude, Double longitude) {
+    public Future<String> patchAsync(String public_code, String private_code, Double latitude, Double longitude, String MockURL) {
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> patch(public_code, private_code, latitude, longitude));
+        var future = executor.submit(() -> patch(public_code, private_code, latitude, longitude, MockURL));
         return future;
     }
 }

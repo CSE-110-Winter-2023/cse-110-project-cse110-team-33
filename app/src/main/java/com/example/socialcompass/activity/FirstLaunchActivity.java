@@ -40,7 +40,7 @@ public class FirstLaunchActivity extends AppCompatActivity {
 
     public boolean validNewPublicID(String public_code) throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
-        Future<Location> result = api.getAsync(public_code);
+        Future<Location> result = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/");
         var toCheck = result.get().public_code;
         if(toCheck == null){
             return true;
@@ -72,7 +72,7 @@ public class FirstLaunchActivity extends AppCompatActivity {
 
         LocationAPI api = LocationAPI.provide();
         api.putAsync(new Location(public_code, -1, -1,
-                display_name), private_code);
+                display_name), private_code, "https://socialcompass.goto.ucsd.edu/location/");
 
         // check if profile was created? alert if not
 

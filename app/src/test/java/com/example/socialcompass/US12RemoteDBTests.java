@@ -35,7 +35,7 @@ public class US12RemoteDBTests {
 
         System.out.println(public_code);
 
-        Future<String> result = api.putAsync(location, private_code);
+        Future<String> result = api.putAsync(location, private_code, "https://socialcompass.goto.ucsd.edu/location/");
         String response = result.get();
         System.out.println(response);
 
@@ -49,7 +49,7 @@ public class US12RemoteDBTests {
     public void getLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
 
-        Future<Location> result = api.getAsync(public_code);
+        Future<Location> result = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/");
         System.out.println(result.get().toString());
 
         assertEquals(location.label, result.get().label);
@@ -63,7 +63,7 @@ public class US12RemoteDBTests {
         location.latitude = 64;
         location.longitude = 64;
 
-        Future<String> result = api.patchAsync(public_code, private_code, location.latitude, location.longitude);
+        Future<String> result = api.patchAsync(public_code, private_code, location.latitude, location.longitude, "https://socialcompass.goto.ucsd.edu/location/");
         Location locationFromApi = Location.fromJSON(result.get());
 
         assertEquals(location.latitude, locationFromApi.latitude, 0.01);
@@ -75,7 +75,7 @@ public class US12RemoteDBTests {
     public void deleteLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
 
-        Future<String> result = api.deleteAsync(location, private_code);
+        Future<String> result = api.deleteAsync(location, private_code, "https://socialcompass.goto.ucsd.edu/location/");
         assertEquals("{\"message\":\"Location deleted.\"}", result.get());
     }
 
@@ -83,7 +83,7 @@ public class US12RemoteDBTests {
     public void getNonexistentLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
 
-        Future<Location> result = api.getAsync(public_code);
+        Future<Location> result = api.getAsync(public_code, "https://socialcompass.goto.ucsd.edu/location/");
         System.out.println(result.get().toString());
 
         assertNull(result.get().public_code);
