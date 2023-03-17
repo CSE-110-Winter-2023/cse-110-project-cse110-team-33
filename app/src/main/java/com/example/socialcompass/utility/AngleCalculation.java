@@ -23,11 +23,11 @@ public class AngleCalculation {
 
         //bearing = Math.toDegrees(bearing);
 
-        bearing -= 90;
-
-        if (bearing < 0) {
-            bearing += 360;
-        }
+//        bearing -= 90;
+//
+//        if (bearing < 0) {
+//            bearing += 360;
+//        }
 
         return bearing;
     }
