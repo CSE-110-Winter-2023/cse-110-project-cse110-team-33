@@ -58,7 +58,10 @@ public class FirstLaunchActivity extends AppCompatActivity {
         String display_name = displayNameInput.getText().toString().trim();
         String public_code = publicIDInput.getText().toString().trim();
         String server_URL = serverURL.getText().toString().trim();
-        if (!server_URL.equals("")) {
+        if (server_URL.equals("")) {
+            api.setURL("https://socialcompass.goto.ucsd.edu/location/");
+        }
+        else{
             api.setURL((server_URL));
         }
         if(!validNewPublicID(public_code)){
