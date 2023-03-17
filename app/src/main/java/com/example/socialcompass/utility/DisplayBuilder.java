@@ -269,10 +269,12 @@ public class DisplayBuilder {
 
 
                             if (!target.getValue().getText().equals("X")){
-                                target.getValue().setText(target.getKey().substring(0, 4));
+                                target.getValue().setText(target.getKey().substring(0,
+                                        Math.min(4, target.getKey().length())));
                             }
                             if (!check.getValue().getText().equals("X")){
-                                check.getValue().setText(check.getKey().substring(0, 4));
+                                check.getValue().setText(check.getKey().substring(0,
+                                        Math.min(4, target.getKey().length())));
                             }
 
                             Log.d("ABSOLUTELOC", String.format("%d %d",
