@@ -317,4 +317,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public DisplayBuilder getDisplayBuilder(){
+        return this.displayBuilder;
+    }
+
 }
