@@ -12,23 +12,17 @@ import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.typeText;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.junit.Assert.*;
-
-import android.util.Pair;
-import android.widget.TextView;
 
 import com.example.socialcompass.activity.MainActivity;
 import com.example.socialcompass.utility.DisplayBuilder;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class US15InstrumentedTests {
+public class US15US18InstrumentedTests {
     @Rule
     public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -36,7 +30,7 @@ public class US15InstrumentedTests {
             = new ActivityScenarioRule<>(MainActivity.class);
 
     @Test
-    public void US15US18StoryTest() {
+    public void US15US18InstrumentedTest() {
         onView(withId(R.id.btnZoomIn)).perform(click());
         onView(withId(R.id.btnZoomOut)).perform(click());
         activityScenarioRule.getScenario().onActivity(activity -> {

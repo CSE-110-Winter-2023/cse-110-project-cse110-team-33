@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.widget.TextView;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -318,6 +319,79 @@ public class DisplayBuilder {
 
         if (horizontalOverlap && verticalOverlap) return true;
         return false;
+    }
+
+    public TextView mockSetLiveLocations(Pair<Double, Double> self_location, Location location,
+                                 Map<String, TextView> labels,
+                                 ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
+
+        double level = currentZoomLevel();
+        double parentRadius = (double)getConstraintLayout().getHeight()/ 2.0;
+
+        this.liveLocations = liveLocations;
+
+        TextView textView = new TextView(context);
+
+        double distance = distanceCalculator.CalculateDistance(self_location.first,
+                self_location.second, location.latitude, location.longitude);
+        double relative_angle = angleCalculator.calculateBearing(self_location.first,
+                self_location.second, location.latitude,location.longitude);
+
+        if (!labels.containsKey(location.label)) {
+            //textView = new TextView(context);
+            textView.setId(View.generateViewId());
+            textView.setText(location.label);
+
+
+            //If the view is outside the boundary, make it X
+            switch (zoom){
+                case 1:
+                    if (distance >= boundary[1]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 2:
+                    if (distance > boundary[2]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 3:
+                    if (distance > boundary[3]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 4:
+                    if (distance > boundary[4]){
+                        textView.setText("X");
+                    }
+                    break;
+            }
+
+
+            ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            textView.setLayoutParams(newParams);
+            textView.setGravity(Gravity.CENTER);
+            newParams.circleAngle = 0;
+            newParams.circleRadius = (int)distanceCalculator.pixelCalculator(level,parentRadius,distance);
+
+            newParams.circleConstraint = compassConstraintLayout.getId();
+
+            compassConstraintLayout.addView(textView);
+            labels.put(location.label, textView);
+        }
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)
+                labels.get(location.label).getLayoutParams();
+
+
+        params.circleAngle = (float) relative_angle;
+        labels.get(location.label).setLayoutParams(params);
+        int loc[] = new int[2];
+        labels.get(location.label).getLocationOnScreen(loc);
+
+        return textView;
+
     }
 
 
