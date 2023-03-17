@@ -1,5 +1,7 @@
 package com.example.socialcompass.model;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 

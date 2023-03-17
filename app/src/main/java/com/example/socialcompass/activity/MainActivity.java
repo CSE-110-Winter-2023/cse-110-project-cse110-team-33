@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     public String public_code;
     public String private_code;
     public String display_name;
+    public String server_URL;
 
     private List<LiveData<Location>> locationList;
 
@@ -206,6 +207,10 @@ public class MainActivity extends AppCompatActivity {
         public_code = preferences.getString("public_code", "null");
         private_code = preferences.getString("private_code", "null");
         display_name = preferences.getString("display_name", "null");
+
+        server_URL = preferences.getString("server_url", "https://socialcompass.goto.ucsd.edu/location/");
+        api.setURL(server_URL);
+        Log.d("SERVERURL", server_URL);
 
         TextView displayName = findViewById(R.id.displayName);
         TextView publicCode = findViewById(R.id.publicCode);

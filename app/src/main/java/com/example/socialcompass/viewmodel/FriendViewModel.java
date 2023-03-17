@@ -1,6 +1,8 @@
 package com.example.socialcompass.viewmodel;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -24,7 +26,9 @@ public class FriendViewModel extends AndroidViewModel {
         var context = getApplication().getApplicationContext();
         var db = LocationDatabase.getSingleton(context);
         var dao = db.locationDao();
+
         var api = LocationAPI.provide();
+
         this.repo = new LocationRepository(dao, api);
     }
 
