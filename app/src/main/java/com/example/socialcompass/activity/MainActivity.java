@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -36,19 +37,25 @@ import com.example.socialcompass.model.LocationDao;
 import com.example.socialcompass.model.LocationDatabase;
 import com.example.socialcompass.utility.DisplayBuilder;
 import com.example.socialcompass.utility.DistanceCalculation;
+import com.example.socialcompass.utility.GPSChecker;
 import com.example.socialcompass.utility.LocationService;
 import com.example.socialcompass.utility.OrientationService;
 import com.example.socialcompass.R;
 import com.example.socialcompass.viewmodel.LocationViewModel;
 
 
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -74,9 +81,10 @@ public class MainActivity extends AppCompatActivity {
 
     private AngleCalculation calculator;
     private DistanceCalculation distanceCalculator;
-    private String public_code;
-    private String private_code;
-    private String display_name;
+    public String public_code;
+    public String private_code;
+    public String display_name;
+    public String server_URL;
 
     private List<LiveData<Location>> locationList;
 
@@ -89,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setUp();
+        checkLocationPermissions();
+        locationService = LocationService.singleton(this);
+        orientationService = new OrientationService(this);
 
         locationVM = new ViewModelProvider(this).get(LocationViewModel.class);
 
@@ -104,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) child.getLayoutParams();
         compassConstraintLayout.addView(child);
 
-        params.height = 900;
-        params.width = 900;
+        params.height = compassConstraintLayout.getHeight();
+        params.width = compassConstraintLayout.getWidth();
+        params.setMargins(40, 40, 40,40);
         params.topToTop = compassConstraintLayout.getId();
         params.bottomToBottom = compassConstraintLayout.getId();
         params.startToStart = compassConstraintLayout.getId();
@@ -117,6 +129,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        TextView gpsText = (TextView) findViewById(R.id.gpsText);
+        ImageView gpsImage = (ImageView) findViewById(R.id.gpsImage);
+
+        GPSChecker gpsChecker = new GPSChecker(locationService, gpsText, gpsImage);
+        gpsChecker.runGPSChecker();
+
 
     }
 
@@ -125,9 +143,6 @@ public class MainActivity extends AppCompatActivity {
         locationDao = db.locationDao();
         api = LocationAPI.provide();
         repo = new LocationRepository(locationDao, api);
-        checkLocationPermissions();
-        locationService = LocationService.singleton(this);
-        orientationService = new OrientationService(this);
     }
 
     @Override
@@ -193,6 +208,10 @@ public class MainActivity extends AppCompatActivity {
         private_code = preferences.getString("private_code", "null");
         display_name = preferences.getString("display_name", "null");
 
+        server_URL = preferences.getString("server_url", "https://socialcompass.goto.ucsd.edu/location/");
+        api.setURL(server_URL);
+        Log.d("SERVERURL", server_URL);
+
         TextView displayName = findViewById(R.id.displayName);
         TextView publicCode = findViewById(R.id.publicCode);
         TextView privateCode = findViewById(R.id.privateCode);
@@ -255,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
             liveLocation.observe(this, location -> {
                 displayBuilder.setLiveLocations(self_location,location,labels,compassDisplay,compassConstraintLayout);
             });
+            displayBuilder.viewsOverlap(labels);
         }
     }
 
@@ -277,10 +297,10 @@ public class MainActivity extends AppCompatActivity {
         for (var liveLoc : this.locationList) {
             liveLoc.removeObservers(this);
         }
-        locationList.clear();
-
-        //locationService.registerLocationListener();
-        getFriendsToTrack();
+//        locationList.clear();
+//
+//        //locationService.registerLocationListener();
+//        getFriendsToTrack();
         updateLocation();
     }
 
@@ -294,11 +314,16 @@ public class MainActivity extends AppCompatActivity {
         for (var liveLoc : this.locationList) {
             liveLoc.removeObservers(this);
         }
-        locationList.clear();
+//        locationList.clear();
 
         //locationService.registerLocationListener();
-        getFriendsToTrack();
+//        getFriendsToTrack();
         updateLocation();
 
     }
+
+    public DisplayBuilder getDisplayBuilder(){
+        return this.displayBuilder;
+    }
+
 }

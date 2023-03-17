@@ -29,13 +29,17 @@ public class FirstLaunchActivity extends AppCompatActivity {
     EditText displayNameInput;
     EditText publicIDInput;
 
+    EditText serverURL;
+
+    LocationAPI api;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_launch);
-
+        serverURL = findViewById(R.id.ServerURL);
         displayNameInput = findViewById(R.id.displayNameInput);
         publicIDInput = findViewById(R.id.publicIDInput);
+        api = LocationAPI.provide();
     }
 
     public boolean validNewPublicID(String public_code) throws ExecutionException, InterruptedException {
@@ -53,6 +57,20 @@ public class FirstLaunchActivity extends AppCompatActivity {
     public void createUser(View view) throws ExecutionException, InterruptedException {
         String display_name = displayNameInput.getText().toString().trim();
         String public_code = publicIDInput.getText().toString().trim();
+        String server_URL = serverURL.getText().toString().trim();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = preferences.edit();
+
+        if (server_URL.equals("")) {
+            api.setURL("https://socialcompass.goto.ucsd.edu/location/");
+            editor.putString("server_url", "https://socialcompass.goto.ucsd.edu/location/");
+        }
+        else{
+            api.setURL((server_URL));
+            editor.putString("server_url", server_URL);
+        }
+
         if(!validNewPublicID(public_code)){
             AlertBuilder.showAlert(this, "That Public ID is already taken. Please try again!");
             return;
@@ -60,9 +78,6 @@ public class FirstLaunchActivity extends AppCompatActivity {
 
 //        String private_code = UUID.randomUUID().toString();
         String private_code = "0123456789"; // for easier testing
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = preferences.edit();
 
         editor.putString("public_code", public_code);
         editor.putString("private_code", private_code);

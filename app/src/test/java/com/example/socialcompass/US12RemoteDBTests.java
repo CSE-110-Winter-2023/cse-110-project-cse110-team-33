@@ -32,6 +32,7 @@ public class US12RemoteDBTests {
     @Test
     public void putLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
+        api.setURL("https://socialcompass.goto.ucsd.edu/location/");
 
         System.out.println(public_code);
 
@@ -48,6 +49,7 @@ public class US12RemoteDBTests {
     @Test
     public void getLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
+        api.setURL("https://socialcompass.goto.ucsd.edu/location/");
 
         Future<Location> result = api.getAsync(public_code);
         System.out.println(result.get().toString());
@@ -59,6 +61,7 @@ public class US12RemoteDBTests {
     @Test
     public void patchLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
+        api.setURL("https://socialcompass.goto.ucsd.edu/location/");
 
         location.latitude = 64;
         location.longitude = 64;
@@ -74,6 +77,7 @@ public class US12RemoteDBTests {
     @Test
     public void deleteLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
+        api.setURL("https://socialcompass.goto.ucsd.edu/location/");
 
         Future<String> result = api.deleteAsync(location, private_code);
         assertEquals("{\"message\":\"Location deleted.\"}", result.get());
@@ -82,6 +86,7 @@ public class US12RemoteDBTests {
     @Test
     public void getNonexistentLocation() throws ExecutionException, InterruptedException {
         LocationAPI api = LocationAPI.provide();
+        api.setURL("https://socialcompass.goto.ucsd.edu/location/");
 
         Future<Location> result = api.getAsync(public_code);
         System.out.println(result.get().toString());

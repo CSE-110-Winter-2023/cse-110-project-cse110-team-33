@@ -1,7 +1,7 @@
 package com.example.socialcompass.utility;
 
-import android.app.Activity;
 import android.util.Pair;
+import android.view.Gravity;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -16,13 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 
 import com.example.socialcompass.R;
 import com.example.socialcompass.model.Location;
-
-import org.w3c.dom.Text;
 
 public class DisplayBuilder {
 
@@ -32,12 +29,14 @@ public class DisplayBuilder {
     private ImageView centerCircle;
     // for centering views
 
-    private int zoom = 4; // values between 1 and 4, default for now is 4
+    private int zoom = 2; // values between 1 and 4, default for now is 4
     private ImageView[] radarImageViews = new ImageView[4]; // 0-1, 1-10, 10-500, 500+ miles
 
     private List<LiveData<Location>> liveLocations = Collections.emptyList();
 
-//    private Map<String, TextView> labels = new HashMap<>();
+    private int[] boundary = new int[]{0, 1, 10, 500, 1000};
+
+    //    private Map<String, TextView> labels = new HashMap<>();
     private AngleCalculation angleCalculator;
     private DistanceCalculation distanceCalculator;
 //    private ImageView compassDisplay = centerCircle.findViewById(R.id.compassDisplay);
@@ -102,10 +101,18 @@ public class DisplayBuilder {
 
     private void createRadar() {
         double percent = 1;
-        for (int i = 3; i >= 0; i--) {
+        int i = 0;
+        while (i < 2) {
             this.radarImageViews[i] = addImageViewPercent(percent);
-            percent -= 0.25;
+            percent -= 0.5;
+            i++;
         }
+        while (i < 4) {
+            this.radarImageViews[i] = addImageViewPercent(1);
+            this.radarImageViews[i].setVisibility(View.INVISIBLE);
+            i++;
+        }
+
     }
 
     private void updateZoom() {
@@ -146,26 +153,19 @@ public class DisplayBuilder {
         if (zoom == 1) return this;
         zoom--;
         updateZoom();
-
-//        displayIcon(level,parentRadius,this);
-
-//        Log.d("ZOOM", String.valueOf(zoom));
         return this;
     }
     public DisplayBuilder zoomOut() {
         if (zoom == 4) return this;
         zoom++;
         updateZoom();
-//        Log.d("ZOOM", String.valueOf(zoom));
         return this;
     }
 
     // should we update location icons in builder?
-    public void setLiveLocations(Pair<Double, Double> self_location, Location location, Map<String, TextView> labels,ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
-        // remove all icons
-//        for (Map.Entry<String, TextView> entry : labels.entrySet()) {
-//            labels.remove(entry.getKey());
-//        }
+    public void setLiveLocations(Pair<Double, Double> self_location, Location location,
+                                 Map<String, TextView> labels,
+                                 ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
 
         double level = currentZoomLevel();
         double parentRadius = (double)getConstraintLayout().getHeight()/ 2.0;
@@ -174,18 +174,49 @@ public class DisplayBuilder {
 
         double distance = distanceCalculator.CalculateDistance(self_location.first,
                 self_location.second, location.latitude, location.longitude);
+        double relative_angle = angleCalculator.calculateBearing(self_location.first,
+                self_location.second, location.latitude,location.longitude);
 
         if (!labels.containsKey(location.label)) {
             TextView textView = new TextView(context);
             textView.setId(View.generateViewId());
             textView.setText(location.label);
 
-            ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(88, 88);
+
+            //If the view is outside the boundary, make it X
+            switch (zoom){
+                case 1:
+                    if (distance >= boundary[1]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 2:
+                    if (distance > boundary[2]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 3:
+                    if (distance > boundary[3]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 4:
+                    if (distance > boundary[4]){
+                        textView.setText("X");
+                    }
+                    break;
+            }
+
+
+            ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             textView.setLayoutParams(newParams);
+            textView.setGravity(Gravity.CENTER);
             newParams.circleAngle = 0;
             newParams.circleRadius = (int)distanceCalculator.pixelCalculator(level,parentRadius,distance);
 
-            newParams.circleConstraint = compassDisplay.getId();
+            newParams.circleConstraint = compassConstraintLayout.getId();
 
             compassConstraintLayout.addView(textView);
             labels.put(location.label, textView);
@@ -194,16 +225,10 @@ public class DisplayBuilder {
                 labels.get(location.label).getLayoutParams();
 
 
-        double relative_angle = angleCalculator.calculateBearing(self_location.first,
-                self_location.second, location.latitude,location.longitude);
-//        Log.d("LOCS", "My location: " + self_location.first + ", " +
-//                self_location.second + " | Their location: " + location.latitude + ", " +
-//                location.longitude);
-//        Log.d("RELATIVEANGLE", location.label + ": " + relative_angle);
-
         params.circleAngle = (float) relative_angle;
         labels.get(location.label).setLayoutParams(params);
-
+        int loc[] = new int[2];
+        labels.get(location.label).getLocationOnScreen(loc);
 
     }
 
@@ -213,6 +238,160 @@ public class DisplayBuilder {
 
     public int currentZoomLevel() {
         return zoom;
+    }
+
+    public void viewsOverlap(Map<String, TextView> labels) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                for (var target : labels.entrySet()) {
+
+                    int targetDimens[] = new int[4];
+                    getDimens(target.getValue(), targetDimens);
+
+                    ConstraintLayout.LayoutParams targetParams =
+                            (ConstraintLayout.LayoutParams) target.getValue().getLayoutParams();
+
+                    for (var check : labels.entrySet()) {
+                        if (target.getKey().equals(check.getKey())) continue;
+
+                        int checkDimens[] = new int[4];
+                        getDimens(check.getValue(), checkDimens);
+
+                        if (overlap(targetDimens, checkDimens)) {
+                            Log.d("ABSOLUTELOC", String.format("%s %s",
+                                    target.getKey(), check.getKey()));
+
+
+                            ConstraintLayout.LayoutParams checkParams =
+                                    (ConstraintLayout.LayoutParams) check.getValue().getLayoutParams();
+
+
+                            if (!target.getValue().getText().equals("X")){
+                                target.getValue().setText(target.getKey().substring(0,
+                                        Math.min(4, target.getKey().length())));
+                            }
+                            if (!check.getValue().getText().equals("X")){
+                                check.getValue().setText(check.getKey().substring(0,
+                                        Math.min(4, target.getKey().length())));
+                            }
+
+                            Log.d("ABSOLUTELOC", String.format("%d %d",
+                                    targetParams.circleRadius, checkParams.circleRadius));
+
+                            if (Math.abs(targetParams.circleRadius - checkParams.circleRadius) > 60) continue;
+
+                            if (targetParams.circleRadius <= checkParams.circleRadius) {
+                                targetParams.circleRadius -= 5;
+                                checkParams.circleRadius += 5;
+                            } else {
+                                checkParams.circleRadius -= 5;
+                                targetParams.circleRadius += 5;
+                            }
+
+                        }
+
+                    }
+
+            }
+        }
+        }).run();
+    }
+
+    private void getDimens(View view, int[] dimens) {
+
+        int loc[] = new int[2];
+        view.getLocationOnScreen(loc);
+
+        dimens[0] = loc[0];
+        dimens[1] = loc[1];
+        dimens[2] = view.getWidth();
+        dimens[3] = view.getHeight();
+
+    }
+
+    private boolean overlap(int[] target, int[] check) {
+
+        boolean horizontalOverlap = (Math.abs(target[0] - check[0]) <= target[2] + check[2]);
+        boolean verticalOverlap = (Math.abs(target[1] - check[1]) <= target[3] + check[3]);
+
+        if (horizontalOverlap && verticalOverlap) return true;
+        return false;
+    }
+
+    public TextView mockSetLiveLocations(Pair<Double, Double> self_location, Location location,
+                                 Map<String, TextView> labels,
+                                 ImageView compassDisplay,ConstraintLayout compassConstraintLayout) {
+
+        double level = currentZoomLevel();
+        double parentRadius = (double)getConstraintLayout().getHeight()/ 2.0;
+
+        this.liveLocations = liveLocations;
+
+        TextView textView = new TextView(context);
+
+        double distance = distanceCalculator.CalculateDistance(self_location.first,
+                self_location.second, location.latitude, location.longitude);
+        double relative_angle = angleCalculator.calculateBearing(self_location.first,
+                self_location.second, location.latitude,location.longitude);
+
+        if (!labels.containsKey(location.label)) {
+            //textView = new TextView(context);
+            textView.setId(View.generateViewId());
+            textView.setText(location.label);
+
+
+            //If the view is outside the boundary, make it X
+            switch (zoom){
+                case 1:
+                    if (distance >= boundary[1]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 2:
+                    if (distance > boundary[2]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 3:
+                    if (distance > boundary[3]){
+                        textView.setText("X");
+                    }
+                    break;
+                case 4:
+                    if (distance > boundary[4]){
+                        textView.setText("X");
+                    }
+                    break;
+            }
+
+
+            ConstraintLayout.LayoutParams newParams = new ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            textView.setLayoutParams(newParams);
+            textView.setGravity(Gravity.CENTER);
+            newParams.circleAngle = 0;
+            newParams.circleRadius = (int)distanceCalculator.pixelCalculator(level,parentRadius,distance);
+
+            newParams.circleConstraint = compassConstraintLayout.getId();
+
+            compassConstraintLayout.addView(textView);
+            labels.put(location.label, textView);
+        }
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams)
+                labels.get(location.label).getLayoutParams();
+
+
+        params.circleAngle = (float) relative_angle;
+        labels.get(location.label).setLayoutParams(params);
+        int loc[] = new int[2];
+        labels.get(location.label).getLocationOnScreen(loc);
+
+        return textView;
+
     }
 
 

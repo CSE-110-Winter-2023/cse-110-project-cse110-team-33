@@ -3,9 +3,11 @@ package com.example.socialcompass.utility;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -14,12 +16,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import android.Manifest;
 
+import java.util.Calendar;
+
 public class LocationService implements LocationListener {
 
     private static LocationService instance;
     private Activity activity;
 
     private MutableLiveData<Pair<Double, Double>> locationValue;
+    private long lastUpdatedAt;
 
     private final LocationManager locationManager;
 
@@ -40,6 +45,7 @@ public class LocationService implements LocationListener {
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         // Register sensor listeners
         this.registerLocationListener();
+        lastUpdatedAt = Calendar.getInstance().getTimeInMillis();
     }
 
     public void registerLocationListener(){
@@ -56,14 +62,19 @@ public class LocationService implements LocationListener {
     public void onLocationChanged(@NonNull Location location) {
         this.locationValue.postValue(new Pair<Double, Double>(location.getLatitude(),
                 location.getLongitude()));
+        this.lastUpdatedAt = location.getTime();
     }
 
     public void unregisterLocationListener() {locationManager.removeUpdates(this); }
 
     public LiveData<Pair<Double, Double>> getLocation(){ return this.locationValue; }
 
+    public long getUpdatedAt(){ return this.lastUpdatedAt; }
+
     public void setMockLocationSource(MutableLiveData<Pair<Double, Double>> mockDataSource) {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
     }
+
+    public void mockUpdatedAt(long time){ this.lastUpdatedAt = time; }
 }

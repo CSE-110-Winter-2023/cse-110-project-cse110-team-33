@@ -11,7 +11,9 @@
         android:id="@+id/displayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="NAME"
+        android:layout_marginTop="24dp"
+        android:text="Welcome, NAME!"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,7 +21,8 @@
         android:id="@+id/publicCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="public code"
+        android:text="UID: public code"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/displayName" />
 
@@ -28,42 +31,74 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="private code"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/publicCode" />
+
+    <LinearLayout
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15">
+
+        <ImageView
+            android:id="@+id/gpsImage"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="12dp"
+            android:src="@drawable/circle" />
+
+        <TextView
+            android:id="@+id/gpsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No signal" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/orientationDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Orientation Display"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
-
-    <TextView
-        android:id="@+id/locationDisplay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location Display"
+        android:text="Orientation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.2" />
 
+    <TextView
+        android:id="@+id/locationDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You are at: \n Location"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.24" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/compassConstraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="130dp">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationDisplay"
+        app:layout_constraintBottom_toTopOf="@id/friendManagerBtn"
+        android:layout_marginHorizontal="64dp">
 
         <ImageView
             android:id="@+id/compassDisplay"
             android:layout_width="172dp"
             android:layout_height="291dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,27 +112,13 @@
     <ImageView
         android:id="@+id/needleDisplay"
         android:layout_width="48dp"
-        android:layout_height="68dp"
+        android:layout_height="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_bias="0.33"
         app:srcCompat="@drawable/needle" />
-
-    <Button
-        android:id="@+id/locationManagerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button"
-        android:onClick="launchLocationListActivity"
-        android:text="Location Manager"
-        app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
 
     <Button
         android:id="@+id/friendManagerBtn"
@@ -108,29 +129,43 @@
         android:onClick="launchFriendListActivity"
         android:text="Friend manager"
         app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/locationManagerButton" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8" />
 
-    <ImageButton
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_add_24"
-        android:backgroundTint="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnZoomOut"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/compassConstraintLayout"
+        app:layout_constraintBottom_toBottomOf="@id/compassConstraintLayout"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    <ImageButton
+        android:layout_weight="1"
         android:id="@+id/btnZoomIn"
-        android:onClick="zoomIn" />
-
-    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_remove_24"
         android:backgroundTint="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="zoomIn"
+        android:src="@drawable/baseline_add_24"
+        app:layout_constraintBottom_toTopOf="@id/btnZoomOut"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:layout_weight="1"
         android:id="@+id/btnZoomOut"
-        android:onClick="zoomOut" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:onClick="zoomOut"
+        android:src="@drawable/baseline_remove_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    </LinearLayout>
 
     <!--    <Button-->
     <!--        android:id="@+id/dataEntryPage"-->
