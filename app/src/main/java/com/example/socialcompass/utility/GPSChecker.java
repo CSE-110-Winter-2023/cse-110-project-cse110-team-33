@@ -43,6 +43,7 @@ public class GPSChecker {
                     Log.d("GPSSTATUS", hms);
 
                     gpsText.setText(hms);
+                    //gpsText.setText("meme");
                     gpsImage.setImageResource(R.drawable.circle_red);
                 }
                 handler.postDelayed(this, delay);

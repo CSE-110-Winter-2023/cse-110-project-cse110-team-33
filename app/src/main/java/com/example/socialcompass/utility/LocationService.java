@@ -75,4 +75,6 @@ public class LocationService implements LocationListener {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
     }
+
+    public void mockUpdatedAt(long time){ this.lastUpdatedAt = time; }
 }
